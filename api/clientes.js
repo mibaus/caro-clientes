@@ -2,8 +2,8 @@
 
 export default async function handler(req, res) {
     const { method } = req;
-    const scriptUrl = "https://script.google.com/macros/s/AKfycbwZ5C_g6d6gkG7dH5V8pfITkSmf1a486OzfF-8NqJHwTGdUQXSfom9kxm5X71cBwzAdVA/exec";
-    const token = "686b368c-d213-4d3f-9590-f7e455e334cb";
+    const scriptUrl = process.env.APPSCRIPT_URL;
+    const token = process.env.APPSCRIPT_TOKEN;
   
     if (!scriptUrl || !token) {
       return res.status(500).json({ error: "Faltan credenciales del entorno" });
@@ -19,22 +19,20 @@ export default async function handler(req, res) {
       }
   
       else if (method === "POST") {
-        // Registrar venta o cliente nuevo (según payload)
+        // Registrar cliente nuevo
         const payload = req.body;
   
-        // Si querés registrar una nueva venta:
-        if (payload.action === "guardarVenta") {
-          const response = await fetch(scriptUrl, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ ...payload, token })
-          });
-          const data = await response.json();
-          return res.status(200).json(data);
-        }
-  
-        // Si querés guardar cliente nuevo, podrías manejarlo aquí también.
-        return res.status(400).json({ error: "Acción desconocida" });
+        const response = await fetch(scriptUrl, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ 
+            action: "guardarCliente",
+            token,
+            ...payload
+          })
+        });
+        const data = await response.json();
+        return res.status(200).json(data);
       }
   
       else {

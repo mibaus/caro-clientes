@@ -1,79 +1,134 @@
-# Caro Clientes - Sistema de Gestión
+# 🎯 Gestión de Clientes
 
-Sistema de gestión de clientes integrado con Google Sheets.
+Aplicación web moderna y elegante para gestión de clientes y ventas, integrada con Google Sheets a través de Apps Script.
+
+## ✨ Características
+
+- 🔍 **Búsqueda inteligente** con debounce y filtros por zona
+- 📊 **Gestión de clientes** con información detallada
+- 💰 **Registro de ventas** con un solo clic
+- 🎂 **Cumpleaños del día** con integración de WhatsApp
+- 📱 **Responsive** y optimizado para móvil
+- 🎨 **Diseño moderno** con TailwindCSS
+
+## 🚀 Inicio Rápido
+
+### Instalación
+
+```bash
+# Instalar dependencias
+npm install
+
+# Desarrollo local
+npm run dev
+
+# Build para producción
+npm run build
+```
 
 ## 🔧 Configuración de Variables de Entorno
 
 ### Desarrollo Local
 
-1. **Copia el archivo de ejemplo:**
+1. **Crea el archivo `.env.local`:**
    ```bash
-   cp .env.example .env.local
+   touch .env.local
    ```
 
 2. **Completa las variables en `.env.local`:**
 
-   - **SHEET_ID**: ID de tu Google Sheet (se encuentra en la URL)
-   - **GOOGLE_SHEETS_API_KEY**: API Key de Google Cloud Console
-   - **APPS_SCRIPT_URL**: URL de tu Apps Script desplegado
-   - **APPS_SCRIPT_TOKEN**: Token de seguridad personalizado
+   ```
+   APPSCRIPT_URL=https://script.google.com/macros/s/TU_SCRIPT_ID/exec
+   APPSCRIPT_TOKEN=tu_token_secreto
+   ```
 
 ### Configuración en Vercel
 
-Para que funcione en producción, debes configurar las mismas variables en Vercel:
-
 1. **Ve a tu proyecto en Vercel Dashboard**
 2. **Settings > Environment Variables**
-3. **Agrega cada variable:**
+3. **Agrega las variables:**
 
    ```
-   SHEET_ID = [tu_valor]
-   GOOGLE_SHEETS_API_KEY = [tu_valor]
-   APPS_SCRIPT_URL = [tu_valor]
-   APPS_SCRIPT_TOKEN = [tu_valor]
+   APPSCRIPT_URL = https://script.google.com/macros/s/TU_SCRIPT_ID/exec
+   APPSCRIPT_TOKEN = tu_token_secreto
    ```
 
 4. **Importante:** Selecciona en qué entornos aplicar (Production, Preview, Development)
 5. **Redeploy** tu proyecto después de agregar las variables
 
-### ✅ Cómo Obtener las Credenciales
+### ✅ Configuración de Apps Script
 
-#### Google Sheets API Key:
+Tu Apps Script debe tener los siguientes endpoints:
 
-1. Ve a [Google Cloud Console](https://console.cloud.google.com/)
-2. Crea o selecciona un proyecto
-3. Navega a **APIs & Services > Library**
-4. Busca "Google Sheets API" y actívala
-5. Ve a **APIs & Services > Credentials**
-6. Click en **Create Credentials > API Key**
-7. **Importante:** Restringe la API Key:
-   - En **API restrictions**, selecciona "Google Sheets API"
-   - En **Application restrictions**, considera restringir por HTTP referrer
-
-#### Sheet ID:
-
-Es el ID en la URL de tu Google Sheet:
+#### GET - Obtener Clientes
 ```
-https://docs.google.com/spreadsheets/d/ESTE_ES_TU_SHEET_ID/edit
+?action=getClientes&token=TU_TOKEN
 ```
 
-#### Permisos del Google Sheet:
+Debe retornar un array de objetos cliente:
+```json
+[
+  {
+    "id": "1",
+    "nombre": "Juan",
+    "apellido": "Pérez",
+    "zona": "Centro",
+    "telefono": "5491123456789",
+    "fechaNacimiento": "1990-05-15",
+    "ultimaCompra": "2025-10-20"
+  }
+]
+```
 
-Asegúrate de que tu Google Sheet tenga permisos de **Anyone with the link can view** o que la API Key tenga acceso.
+#### POST - Guardar Venta
+```json
+{
+  "action": "guardarVenta",
+  "token": "TU_TOKEN",
+  "clienteID": "1",
+  "fecha": "2025-10-25"
+}
+```
+
+El script debe escribir en la hoja "Ventas" con columnas "Fecha" y "ClienteID".
 
 ## 📝 Estructura del Proyecto
 
 ```
 /api
-  /clientes.js   - API para gestión de clientes
-  /ventas.js     - API para registro de ventas
-index.html       - Frontend de la aplicación
-vercel.json      - Configuración de Vercel
+  /clientes.js          - API para gestión de clientes (GET, POST)
+  /ventas.js            - API para registro de ventas (POST)
+/src
+  /components
+    SearchBar.jsx       - Buscador con filtros
+    ClientList.jsx      - Lista de clientes
+    ClientModal.jsx     - Modal de acciones del cliente
+    BirthdayView.jsx    - Vista de cumpleaños
+    Toast.jsx           - Notificaciones
+  App.jsx               - Componente principal
+  main.jsx              - Punto de entrada
+  index.css             - Estilos globales
+index.html              - HTML base
+vite.config.js          - Configuración de Vite
+tailwind.config.js      - Configuración de Tailwind
+vercel.json             - Configuración de Vercel
 ```
 
-## 🚀 Deploy
+## 🚀 Deploy en Vercel
 
-El proyecto está configurado para deployarse automáticamente en Vercel. Asegúrate de configurar las variables de entorno antes del deploy.
+1. Conecta tu repositorio con Vercel
+2. Configura las variables de entorno (APPSCRIPT_URL, APPSCRIPT_TOKEN)
+3. El build se ejecuta automáticamente con `npm run build`
+4. Vercel sirve los archivos estáticos desde `/dist` y las APIs desde `/api`
+
+## 🎨 Stack Tecnológico
+
+- **Frontend:** React 18 + Vite
+- **Estilos:** TailwindCSS
+- **Iconos:** Lucide React
+- **Backend:** Vercel Serverless Functions
+- **Base de Datos:** Google Sheets (vía Apps Script)
+- **Deploy:** Vercel
 
 ## 🐛 Solución de Problemas
 
