@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+  <body style="font-family: sans-serif; padding: 20px;">
+    <h2>Test de conexión con Vercel</h2>
+    <button id="btn">Obtener clientes</button>
+    <pre id="output"></pre>
+
+    <script>
+      document.getElementById('btn').onclick = async () => {
+        const res = await fetch('/api/clientes');
+        const data = await res.json();
+        document.getElementById('output').textContent = JSON.stringify(data, null, 2);
+      };
+    </script>
+  </body>
+</html>
