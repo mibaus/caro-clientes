@@ -2,8 +2,8 @@
 
 export default async function handler(req, res) {
     const { method } = req;
-    const scriptUrl = process.env.APPSCRIPT_URL;
-    const token = process.env.APPSCRIPT_TOKEN;
+    const scriptUrl = "https://script.google.com/macros/s/AKfycbwZ5C_g6d6gkG7dH5V8pfITkSmf1a486OzfF-8NqJHwTGdUQXSfom9kxm5X71cBwzAdVA/exec";
+    const token = "686b368c-d213-4d3f-9590-f7e455e334cb";
   
     if (!scriptUrl || !token) {
       return res.status(500).json({ error: "Faltan credenciales del entorno" });
