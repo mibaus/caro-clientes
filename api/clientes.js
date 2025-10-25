@@ -33,8 +33,22 @@ export default async function handler(req, res) {
         const response = await fetch(url);
         const data = await response.json();
   
+        // Debug temporal
+        console.log('Google Sheets Response:', { 
+          status: response.status, 
+          hasValues: !!data.values,
+          error: data.error,
+          data: JSON.stringify(data).substring(0, 200)
+        });
+  
         if (!data.values) {
-          return res.status(404).json({ error: "No se encontraron datos" });
+          return res.status(404).json({ 
+            error: "No se encontraron datos",
+            debug: {
+              googleResponse: data,
+              responseStatus: response.status
+            }
+          });
         }
   
         const [headers, ...rows] = data.values;
