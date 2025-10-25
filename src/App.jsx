@@ -30,6 +30,7 @@ function App() {
       console.log('Datos recibidos del API:', data);
       console.log('Tipo de datos:', typeof data);
       console.log('Es array?', Array.isArray(data));
+      console.log('Error en respuesta?', data.error);
       
       // Manejar diferentes formatos de respuesta
       let clientesData = [];

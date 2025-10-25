@@ -2,8 +2,8 @@
 
 export default async function handler(req, res) {
     const { method } = req;
-    const scriptUrl = process.env.APPSCRIPT_URL;
-    const token = process.env.APPSCRIPT_TOKEN;
+    const scriptUrl = process.env.scriptUrl;
+    const token = process.env.token;
   
     if (!scriptUrl || !token) {
       return res.status(500).json({ error: "Faltan credenciales del entorno" });
