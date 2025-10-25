@@ -27,23 +27,42 @@ function App() {
       const response = await fetch('/api/clientes');
       const data = await response.json();
       
-      if (data && Array.isArray(data)) {
-        setClientes(data);
-        setClientesFiltrados(data);
+      console.log('Datos recibidos del API:', data);
+      console.log('Tipo de datos:', typeof data);
+      console.log('Es array?', Array.isArray(data));
+      
+      // Manejar diferentes formatos de respuesta
+      let clientesData = [];
+      if (Array.isArray(data)) {
+        clientesData = data;
+      } else if (data && data.clientes && Array.isArray(data.clientes)) {
+        clientesData = data.clientes;
+      } else if (data && data.data && Array.isArray(data.data)) {
+        clientesData = data.data;
+      }
+      
+      console.log('Clientes procesados:', clientesData);
+      console.log('Primer cliente:', clientesData[0]);
+      
+      if (clientesData.length > 0) {
+        setClientes(clientesData);
+        setClientesFiltrados(clientesData);
         
         // Extraer zonas únicas
-        const zonasUnicas = [...new Set(data.map(c => c.zona).filter(Boolean))];
+        const zonasUnicas = [...new Set(clientesData.map(c => c.zona).filter(Boolean))];
         setZonas(zonasUnicas);
         
         // Filtrar cumpleaños del día
         const hoy = new Date();
-        const cumpleanos = data.filter(cliente => {
+        const cumpleanos = clientesData.filter(cliente => {
           if (!cliente.fechaNacimiento) return false;
           const fechaNac = new Date(cliente.fechaNacimiento);
           return fechaNac.getDate() === hoy.getDate() && 
                  fechaNac.getMonth() === hoy.getMonth();
         });
         setClientesCumpleanos(cumpleanos);
+      } else {
+        showToast('No se encontraron clientes en la respuesta', 'error');
       }
     } catch (error) {
       console.error('Error al cargar clientes:', error);
@@ -54,14 +73,20 @@ function App() {
   };
 
   const handleSearch = useCallback((searchTerm, zona) => {
+    console.log('Buscando:', { searchTerm, zona });
+    console.log('Total clientes:', clientes.length);
+    
     let filtered = [...clientes];
 
     if (searchTerm) {
       const term = searchTerm.toLowerCase();
       filtered = filtered.filter(
-        cliente =>
-          cliente.nombre?.toLowerCase().includes(term) ||
-          cliente.apellido?.toLowerCase().includes(term)
+        cliente => {
+          const nombreMatch = cliente.nombre?.toLowerCase().includes(term);
+          const apellidoMatch = cliente.apellido?.toLowerCase().includes(term);
+          console.log(`Cliente: ${cliente.nombre} ${cliente.apellido}, Match: ${nombreMatch || apellidoMatch}`);
+          return nombreMatch || apellidoMatch;
+        }
       );
     }
 
@@ -69,6 +94,7 @@ function App() {
       filtered = filtered.filter(cliente => cliente.zona === zona);
     }
 
+    console.log('Resultados filtrados:', filtered.length);
     setClientesFiltrados(filtered);
   }, [clientes]);
 
