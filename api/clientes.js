@@ -1,31 +1,73 @@
 // /api/clientes.js
+
 export default async function handler(req, res) {
     const { method } = req;
+    const sheetId = process.env.SHEET_ID;
+    const apiKey = process.env.GOOGLE_SHEETS_API_KEY;
+  
+    if (!sheetId || !apiKey) {
+      return res.status(500).json({ error: "Faltan credenciales del entorno" });
+    }
+  
+    const sheetRange = "Clientes!A:G"; // Nombre exacto de la hoja
   
     try {
-      switch (method) {
-        case 'GET':
-          // Ejemplo de obtención de clientes (después lo conectamos con tu base)
-          res.status(200).json([
-            { nombre: "María", zona: "Centro", celular: "3511234567", ultimaCompra: "22/10/2025" },
-            { nombre: "Carolina", zona: "Norte", celular: "3519876543", ultimaCompra: "10/10/2025" }
-          ]);
-          break;
+      if (method === "GET") {
+        // Leer datos
+        const url = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/${encodeURIComponent(sheetRange)}?key=${apiKey}`;
+        const response = await fetch(url);
+        const data = await response.json();
   
-        case 'POST':
-          // Registrar nuevo cliente
-          const nuevoCliente = req.body;
-          console.log("Nuevo cliente:", nuevoCliente);
-          res.status(201).json({ message: "Cliente creado correctamente", data: nuevoCliente });
-          break;
+        if (!data.values) {
+          return res.status(404).json({ error: "No se encontraron datos" });
+        }
   
-        default:
-          res.setHeader('Allow', ['GET', 'POST']);
-          res.status(405).end(`Método ${method} no permitido`);
+        const [headers, ...rows] = data.values;
+        const clientes = rows.map((row) => {
+          const cliente = {};
+          headers.forEach((h, i) => (cliente[h] = row[i]));
+          return cliente;
+        });
+  
+        return res.status(200).json(clientes);
+      }
+  
+      else if (method === "POST") {
+        // Agregar nuevo cliente
+        const nuevo = req.body;
+  
+        if (!nuevo.Nombre || !nuevo.Celular) {
+          return res.status(400).json({ error: "Datos incompletos" });
+        }
+  
+        const fechaActual = new Date().toLocaleString("es-AR", { timeZone: "America/Argentina/Cordoba" });
+        const values = [[
+          fechaActual,
+          nuevo.Nombre,
+          nuevo.Apellido || "",
+          nuevo.FechaCumpleaños || "",
+          nuevo.Celular,
+          nuevo.Zona || "",
+          nuevo.ClienteID || ""
+        ]];
+  
+        const appendUrl = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/${encodeURIComponent(sheetRange)}:append?valueInputOption=USER_ENTERED&key=${apiKey}`;
+        await fetch(appendUrl, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ values })
+        });
+  
+        return res.status(201).json({ message: "Cliente agregado con éxito" });
+      }
+  
+      else {
+        res.setHeader("Allow", ["GET", "POST"]);
+        return res.status(405).end(`Método ${method} no permitido`);
       }
     } catch (error) {
-      console.error("Error en API /clientes:", error);
-      res.status(500).json({ error: "Error interno del servidor" });
+      console.error("Error en /api/clientes:", error);
+      return res.status(500).json({ error: "Error interno del servidor" });
     }
   }
   
