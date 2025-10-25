@@ -5,8 +5,23 @@ export default async function handler(req, res) {
     const sheetId = process.env.SHEET_ID;
     const apiKey = process.env.GOOGLE_SHEETS_API_KEY;
   
+    // Debug temporal - REMOVER después de solucionar
+    console.log('Variables disponibles:', {
+      SHEET_ID_exists: !!sheetId,
+      SHEET_ID_length: sheetId?.length || 0,
+      API_KEY_exists: !!apiKey,
+      API_KEY_length: apiKey?.length || 0,
+      all_env_keys: Object.keys(process.env).filter(k => k.includes('SHEET') || k.includes('GOOGLE'))
+    });
+  
     if (!sheetId || !apiKey) {
-      return res.status(500).json({ error: "Faltan credenciales del entorno" });
+      return res.status(500).json({ 
+        error: "Faltan credenciales del entorno",
+        debug: {
+          SHEET_ID: !!sheetId,
+          GOOGLE_SHEETS_API_KEY: !!apiKey
+        }
+      });
     }
   
     const sheetRange = "Clientes!A:G"; // Nombre exacto de la hoja
