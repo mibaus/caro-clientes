@@ -16,10 +16,11 @@ export default async function handler(req, res) {
         // Generar fecha actual en formato YYYY-MM-DD
         const fecha = new Date().toISOString().split('T')[0];
         
+        // Usar mayúscula en ClienteID para coincidir con Google Sheets
         const payload = { 
           action: "guardarVenta",
-          clienteID,
-          fecha
+          ClienteID: clienteID,  // Mayúscula
+          Fecha: fecha          // Mayúscula por consistencia
         };
         
         // Enviar token en query string (como en getClientes)
