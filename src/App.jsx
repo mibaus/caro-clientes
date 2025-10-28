@@ -42,8 +42,19 @@ function App() {
         clientesData = data.data;
       }
       
+      // Normalizar campos del API (mapear nombres de Google Sheets a nombres esperados)
+      clientesData = clientesData.map((cliente, index) => ({
+        id: cliente.id || cliente.ID || String(index + 1),
+        nombre: cliente.nombre || cliente.Nombre || '',
+        apellido: cliente.apellido || cliente.Apellido || '',
+        zona: cliente.zona || cliente.Zona || '',
+        telefono: cliente.telefono || cliente.Celular || cliente['Celular 📱'] || '',
+        fechaNacimiento: cliente.fechaNacimiento || cliente['Fecha de cumpleaños 🎂'] || cliente.fechaCumpleanos || '',
+        ultimaCompra: cliente.ultimaCompra || cliente['Última compra'] || cliente['Marca temporal'] || ''
+      }));
+      
       console.log('Clientes procesados:', clientesData);
-      console.log('Primer cliente:', clientesData[0]);
+      console.log('Primer cliente normalizado:', clientesData[0]);
       
       if (clientesData.length > 0) {
         setClientes(clientesData);
