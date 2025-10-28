@@ -21,7 +21,6 @@ const BirthdayView = ({ clientes, loading }) => {
       telefono = '54' + telefono;
     }
     
-    console.log('Abriendo WhatsApp para:', telefono);
     window.open(`https://wa.me/${telefono}?text=${mensajeCodificado}`, '_blank');
   };
 

@@ -42,14 +42,9 @@ function App() {
         clientesData = data.data;
       }
       
-      // Debug: mostrar TODOS los campos del primer cliente
+      // Debug simple
       if (clientesData.length > 0) {
-        console.log('🔍 TODOS LOS CLIENTES RAW:', clientesData);
-        console.log('🔍 Primer cliente RAW (todos los campos):', clientesData[0]);
-        console.log('🔍 Campos disponibles:', Object.keys(clientesData[0]));
-        console.log('🔍 ¿Tiene campo "Última compra"?', clientesData[0]['Última compra']);
-        console.log('🔍 Valor exacto:', JSON.stringify(clientesData[0]['Última compra']));
-        console.log('🔍 Marca temporal:', clientesData[0]['Marca temporal']);
+        console.log('✅ Clientes recibidos:', clientesData.length);
       }
       
       // Normalizar campos del API (mapear nombres de Google Sheets a nombres esperados)
@@ -63,8 +58,6 @@ function App() {
         ultimaCompra: cliente.ultimaCompra || cliente['Última compra'] || cliente['Marca temporal'] || ''
       }));
       
-      console.log('✅ Clientes cargados:', clientesData.length);
-      console.log('🔍 Primer cliente normalizado:', clientesData[0]);
       
       if (clientesData.length > 0) {
         setClientes(clientesData);

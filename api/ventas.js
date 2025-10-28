@@ -9,7 +9,6 @@ export default async function handler(req, res) {
   
       if (req.method === "POST") {
         const { clienteID } = req.body;
-        console.log('📦 Datos recibidos:', { clienteID });
         
         if (!clienteID) return res.status(400).json({ error: "Falta ClienteID" });
   
@@ -19,15 +18,12 @@ export default async function handler(req, res) {
         // Usar mayúscula en ClienteID para coincidir con Google Sheets
         const payload = { 
           action: "guardarVenta",
-          ClienteID: clienteID,  // Mayúscula
-          Fecha: fecha          // Mayúscula por consistencia
+          ClienteID: clienteID,
+          Fecha: fecha
         };
         
         // Enviar token en query string (como en getClientes)
         const url = `${scriptUrl}?action=guardarVenta&token=${token}`;
-        
-        console.log('📤 URL completa:', url);
-        console.log('📤 Payload en body:', payload);
   
         const response = await fetch(url, {
           method: "POST",
@@ -36,9 +32,6 @@ export default async function handler(req, res) {
         });
   
         const result = await response.json();
-        console.log('📥 Respuesta de Apps Script:', result);
-        console.log('Status de respuesta:', response.status);
-        
         return res.status(200).json(result);
       }
   
