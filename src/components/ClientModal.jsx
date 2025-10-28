@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, ShoppingCart, Eye, User, MapPin, Phone, Calendar, Loader2 } from 'lucide-react';
+import { X, ShoppingCart, Eye, User, MapPin, Phone, Calendar, Loader2, MessageCircle } from 'lucide-react';
 
 const ClientModal = ({ cliente, onClose, onVentaRegistrada }) => {
   const [view, setView] = useState('options'); // 'options' | 'details'
@@ -37,6 +37,25 @@ const ClientModal = ({ cliente, onClose, onVentaRegistrada }) => {
     if (!fecha) return 'N/A';
     const date = new Date(fecha);
     return date.toLocaleDateString('es-AR', { day: '2-digit', month: '2-digit', year: 'numeric' });
+  };
+
+  const abrirWhatsApp = () => {
+    // Convertir a string y eliminar caracteres no numéricos
+    let telefono = String(cliente.telefono || '').replace(/\D/g, '');
+    
+    if (!telefono) {
+      alert('Este cliente no tiene un número de teléfono registrado.');
+      return;
+    }
+    
+    // Si no tiene código de país, agregar 549 (Argentina con 9 para celulares)
+    if (telefono.length === 10 && !telefono.startsWith('549')) {
+      telefono = '549' + telefono;
+    } else if (telefono.length === 10 && !telefono.startsWith('54')) {
+      telefono = '54' + telefono;
+    }
+    
+    window.open(`https://wa.me/${telefono}`, '_blank');
   };
 
   return (
@@ -117,10 +136,19 @@ const ClientModal = ({ cliente, onClose, onVentaRegistrada }) => {
 
                 <div className="flex items-start gap-3">
                   <Phone className="w-5 h-5 text-stone-500 mt-0.5" />
-                  <div>
+                  <div className="flex-1">
                     <p className="text-sm text-stone-500 font-medium">Teléfono</p>
                     <p className="font-bold text-stone-900 mt-0.5">{cliente.telefono || 'N/A'}</p>
                   </div>
+                  {cliente.telefono && (
+                    <button
+                      onClick={abrirWhatsApp}
+                      className="flex-shrink-0 w-9 h-9 rounded-lg bg-green-500 hover:bg-green-600 flex items-center justify-center text-white shadow-sm hover:shadow-md transition-all duration-200"
+                      title="Abrir WhatsApp"
+                    >
+                      <MessageCircle className="w-4 h-4" />
+                    </button>
+                  )}
                 </div>
 
                 <div className="flex items-start gap-3">
