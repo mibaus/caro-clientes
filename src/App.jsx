@@ -42,9 +42,15 @@ function App() {
         clientesData = data.data;
       }
       
+      // Debug: mostrar TODOS los campos del primer cliente
+      if (clientesData.length > 0) {
+        console.log('🔍 Primer cliente RAW (todos los campos):', clientesData[0]);
+        console.log('🔍 Campos disponibles:', Object.keys(clientesData[0]));
+      }
+      
       // Normalizar campos del API (mapear nombres de Google Sheets a nombres esperados)
       clientesData = clientesData.map((cliente, index) => ({
-        id: cliente.id || cliente.ID || String(index + 1),
+        id: cliente.ID || cliente.id || cliente.ClienteID || cliente.clienteID || cliente['ID Cliente'] || String(index + 1),
         nombre: cliente.nombre || cliente.Nombre || '',
         apellido: cliente.apellido || cliente.Apellido || '',
         zona: cliente.zona || cliente.Zona || '',
@@ -54,6 +60,7 @@ function App() {
       }));
       
       console.log('✅ Clientes cargados:', clientesData.length);
+      console.log('🔍 Primer cliente normalizado:', clientesData[0]);
       
       if (clientesData.length > 0) {
         setClientes(clientesData);
