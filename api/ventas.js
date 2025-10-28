@@ -18,14 +18,17 @@ export default async function handler(req, res) {
         
         const payload = { 
           action: "guardarVenta",
-          token,
           clienteID,
           fecha
         };
         
-        console.log('📤 Enviando a Apps Script:', payload);
+        // Enviar token en query string (como en getClientes)
+        const url = `${scriptUrl}?action=guardarVenta&token=${token}`;
+        
+        console.log('📤 URL completa:', url);
+        console.log('📤 Payload en body:', payload);
   
-        const response = await fetch(scriptUrl, {
+        const response = await fetch(url, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(payload),
