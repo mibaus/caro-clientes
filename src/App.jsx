@@ -27,10 +27,10 @@ function App() {
       const response = await fetch('/api/clientes');
       const data = await response.json();
       
-      console.log('Datos recibidos del API:', data);
-      console.log('Tipo de datos:', typeof data);
-      console.log('Es array?', Array.isArray(data));
-      console.log('Error en respuesta?', data.error);
+      // Debug: verificar respuesta del API
+      if (data.error) {
+        console.error('Error del API:', data.error, data.debug);
+      }
       
       // Manejar diferentes formatos de respuesta
       let clientesData = [];
@@ -53,8 +53,7 @@ function App() {
         ultimaCompra: cliente.ultimaCompra || cliente['Última compra'] || cliente['Marca temporal'] || ''
       }));
       
-      console.log('Clientes procesados:', clientesData);
-      console.log('Primer cliente normalizado:', clientesData[0]);
+      console.log('✅ Clientes cargados:', clientesData.length);
       
       if (clientesData.length > 0) {
         setClientes(clientesData);
@@ -85,9 +84,6 @@ function App() {
   };
 
   const handleSearch = useCallback((searchTerm, zona) => {
-    console.log('Buscando:', { searchTerm, zona });
-    console.log('Total clientes:', clientes.length);
-    
     let filtered = [...clientes];
 
     if (searchTerm) {
@@ -96,7 +92,6 @@ function App() {
         cliente => {
           const nombreMatch = cliente.nombre?.toLowerCase().includes(term);
           const apellidoMatch = cliente.apellido?.toLowerCase().includes(term);
-          console.log(`Cliente: ${cliente.nombre} ${cliente.apellido}, Match: ${nombreMatch || apellidoMatch}`);
           return nombreMatch || apellidoMatch;
         }
       );
@@ -106,7 +101,6 @@ function App() {
       filtered = filtered.filter(cliente => cliente.zona === zona);
     }
 
-    console.log('Resultados filtrados:', filtered.length);
     setClientesFiltrados(filtered);
   }, [clientes]);
 
