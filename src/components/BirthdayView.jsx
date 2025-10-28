@@ -3,7 +3,7 @@ import { Cake, MapPin, MessageCircle, PartyPopper, Loader2 } from 'lucide-react'
 
 const BirthdayView = ({ clientes, loading }) => {
   const enviarMensajeWhatsApp = (cliente) => {
-    const mensaje = `¡Feliz cumpleaños ${cliente.nombre}! 🎉 Queremos darte un regalo especial. Pasá hoy por la tienda y aprovechá tu descuento.`;
+    const mensaje = `¡Feliz cumpleaños ${cliente.nombre}! Queremos darte un regalo especial. Pasá hoy por la tienda y aprovechá tu descuento.`;
     const mensajeCodificado = encodeURIComponent(mensaje);
     
     // Convertir a string y eliminar caracteres no numéricos

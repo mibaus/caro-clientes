@@ -9,23 +9,32 @@ export default async function handler(req, res) {
   
       if (req.method === "POST") {
         const { clienteID } = req.body;
+        console.log('📦 Datos recibidos:', { clienteID });
+        
         if (!clienteID) return res.status(400).json({ error: "Falta ClienteID" });
   
         // Generar fecha actual en formato YYYY-MM-DD
         const fecha = new Date().toISOString().split('T')[0];
+        
+        const payload = { 
+          action: "guardarVenta",
+          token,
+          clienteID,
+          fecha
+        };
+        
+        console.log('📤 Enviando a Apps Script:', payload);
   
         const response = await fetch(scriptUrl, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ 
-            action: "guardarVenta",
-            token,
-            clienteID,
-            fecha
-          }),
+          body: JSON.stringify(payload),
         });
   
         const result = await response.json();
+        console.log('📥 Respuesta de Apps Script:', result);
+        console.log('Status de respuesta:', response.status);
+        
         return res.status(200).json(result);
       }
   

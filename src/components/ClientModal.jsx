@@ -9,22 +9,32 @@ const ClientModal = ({ cliente, onClose, onVentaRegistrada }) => {
 
   const handleRegistrarVenta = async () => {
     setLoading(true);
+    console.log('Registrando venta para cliente:', cliente);
+    console.log('ClienteID a enviar:', cliente.id);
+    
     try {
+      const payload = { clienteID: cliente.id };
+      console.log('Payload enviado:', payload);
+      
       const response = await fetch('/api/ventas', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ clienteID: cliente.id }),
+        body: JSON.stringify(payload),
       });
+
+      const result = await response.json();
+      console.log('Respuesta del servidor:', result);
 
       if (response.ok) {
         onVentaRegistrada();
         onClose();
       } else {
-        throw new Error('Error al registrar la venta');
+        console.error('Error del servidor:', result);
+        throw new Error(result.error || 'Error al registrar la venta');
       }
     } catch (error) {
-      console.error('Error:', error);
-      alert('Hubo un error al registrar la venta. Intenta nuevamente.');
+      console.error('Error al registrar venta:', error);
+      alert('Hubo un error al registrar la venta. Revisa la consola para más detalles.');
     } finally {
       setLoading(false);
     }
