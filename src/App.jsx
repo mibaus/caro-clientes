@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useMemo, lazy, Suspense } from 'react';
+import { useState, useEffect, useCallback, useMemo, lazy, Suspense } from 'react';
 import { Cake, Users, Loader2 } from 'lucide-react';
 import SearchBar from './components/SearchBar';
 import ClientList from './components/ClientList';

@@ -1,4 +1,4 @@
-import React, { useEffect, memo, useCallback } from 'react';
+import { useEffect, memo } from 'react';
 import { CheckCircle, AlertCircle, X } from 'lucide-react';
 
 const Toast = memo(({ message, type = 'success', onClose }) => {

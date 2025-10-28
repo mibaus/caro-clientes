@@ -1,4 +1,4 @@
-import React, { useState, memo } from 'react';
+import { useState, memo } from 'react';
 import { X, ShoppingCart, Eye, User, MapPin, Phone, Calendar, MessageCircle } from 'lucide-react';
 
 const ClientModal = memo(({ cliente, onClose, onVentaRegistrada }) => {

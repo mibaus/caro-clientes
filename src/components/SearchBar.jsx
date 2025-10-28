@@ -1,4 +1,4 @@
-import React, { useState, useEffect, memo } from 'react';
+import { useState, useEffect, memo } from 'react';
 import { Search, MapPin } from 'lucide-react';
 
 const SearchBar = memo(({ onSearch, zonas = [] }) => {

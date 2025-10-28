@@ -1,4 +1,4 @@
-import React, { memo } from 'react';
+import { memo } from 'react';
 import { Cake, MapPin, MessageCircle, PartyPopper, Loader2 } from 'lucide-react';
 
 const BirthdayView = memo(({ clientes, loading }) => {
