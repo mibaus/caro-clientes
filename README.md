@@ -4,12 +4,14 @@ Aplicación web moderna y elegante para gestión de clientes y ventas, integrada
 
 ## ✨ Características
 
+- 🔐 **Autenticación segura** con contraseña y rate limiting
 - 🔍 **Búsqueda inteligente** con debounce y filtros por zona
 - 📊 **Gestión de clientes** con información detallada
-- 💰 **Registro de ventas** con un solo clic
+- 💰 **Registro de ventas instantáneo** (optimistic UI)
 - 🎂 **Cumpleaños del día** con integración de WhatsApp
 - 📱 **Responsive** y optimizado para móvil
 - 🎨 **Diseño moderno** con TailwindCSS
+- ⚡ **Ultra rápido** con lazy loading y memoización
 
 ## 🚀 Inicio Rápido
 
@@ -38,6 +40,10 @@ npm run build
 2. **Completa las variables en `.env.local`:**
 
    ```
+   # Seguridad
+   VITE_APP_PASSWORD=tu_contraseña_segura
+   
+   # Apps Script
    APPSCRIPT_URL=https://script.google.com/macros/s/TU_SCRIPT_ID/exec
    APPSCRIPT_TOKEN=tu_token_secreto
    ```
@@ -49,12 +55,15 @@ npm run build
 3. **Agrega las variables:**
 
    ```
+   VITE_APP_PASSWORD = tu_contraseña_segura
    APPSCRIPT_URL = https://script.google.com/macros/s/TU_SCRIPT_ID/exec
    APPSCRIPT_TOKEN = tu_token_secreto
    ```
 
 4. **Importante:** Selecciona en qué entornos aplicar (Production, Preview, Development)
 5. **Redeploy** tu proyecto después de agregar las variables
+
+> 📖 **Para instrucciones detalladas de autenticación**, ver `INSTRUCCIONES-AUTENTICACION.md`
 
 ### ✅ Configuración de Apps Script
 
