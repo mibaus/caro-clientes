@@ -29,11 +29,11 @@ Tu aplicación ahora tiene un **sistema de login con contraseña** que protege e
 Agrega esta variable:
 
 ```
-Name:  VITE_APP_PASSWORD
-Value: [TU-CONTRASEÑA-SEGURA]
+Name:  VITE_AUTH_KEY
+Value: [TU-CLAVE-SEGURA]
 ```
 
-**Ejemplo de contraseña segura**:
+**Ejemplo de clave segura**:
 - ❌ Débil: `123456`, `password`, `admin`
 - ✅ Buena: `RestoCaro2024!`, `MiRestaurante#123`
 - ✅ Mejor: `C@r0l1n@R3st0!2024`
@@ -142,11 +142,11 @@ Para cerrar sesión:
 ### **Si Necesitas Cambiarla**
 1. Ve a Vercel Dashboard
 2. Settings → Environment Variables
-3. Edita `VITE_APP_PASSWORD`
+3. Edita `VITE_AUTH_KEY`
 4. Cambia el valor
 5. Save
 6. Vercel redesplegará (1-2 min)
-7. Notifica al equipo la nueva contraseña
+7. Notifica al equipo la nueva clave
 
 ---
 
@@ -169,11 +169,11 @@ Para cerrar sesión:
 - Si no marcó "Recordar sesión", es normal al cerrar el navegador
 - Marca "Recordar sesión" para mantener la sesión
 
-### **"Olvidé la contraseña"**
+### **"Olvidé la clave"**
 **Solución**:
 - Solo el dueño puede verla en Vercel
 - Ve a Vercel → Settings → Environment Variables
-- Verás el valor de `VITE_APP_PASSWORD`
+- Verás el valor de `VITE_AUTH_KEY`
 
 ---
 
@@ -231,8 +231,8 @@ Para cerrar sesión:
 │  CONFIGURACIÓN EN VERCEL                │
 ├─────────────────────────────────────────┤
 │  1. Settings → Environment Variables     │
-│  2. Add: VITE_APP_PASSWORD              │
-│  3. Value: tu-contraseña-segura         │
+│  2. Add: VITE_AUTH_KEY                  │
+│  3. Value: tu-clave-segura              │
 │  4. Save                                │
 │  5. Esperar 1-2 min                     │
 │  6. ✅ Listo                             │

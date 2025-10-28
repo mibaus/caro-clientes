@@ -44,7 +44,7 @@ const Login = ({ onLogin }) => {
     await new Promise(resolve => setTimeout(resolve, 500));
 
     // Validar contraseña
-    const correctPassword = import.meta.env.VITE_APP_PASSWORD || 'admin123';
+    const correctPassword = import.meta.env.VITE_AUTH_KEY || 'admin123';
     
     if (password === correctPassword) {
       // Login exitoso

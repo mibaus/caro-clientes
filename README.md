@@ -41,7 +41,7 @@ npm run build
 
    ```
    # Seguridad
-   VITE_APP_PASSWORD=tu_contraseña_segura
+   VITE_AUTH_KEY=tu_clave_segura
    
    # Apps Script
    APPSCRIPT_URL=https://script.google.com/macros/s/TU_SCRIPT_ID/exec
@@ -55,7 +55,7 @@ npm run build
 3. **Agrega las variables:**
 
    ```
-   VITE_APP_PASSWORD = tu_contraseña_segura
+   VITE_AUTH_KEY = tu_clave_segura
    APPSCRIPT_URL = https://script.google.com/macros/s/TU_SCRIPT_ID/exec
    APPSCRIPT_TOKEN = tu_token_secreto
    ```
