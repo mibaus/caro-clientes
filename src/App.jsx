@@ -34,25 +34,35 @@ function App() {
       const response = await fetch('/api/clientes');
       const data = await response.json();
       
+      // Debug completo
+      console.log('📡 Respuesta completa del API:', data);
+      console.log('📊 Tipo de respuesta:', typeof data);
+      console.log('🔍 Es array?:', Array.isArray(data));
+      
       // Debug: verificar respuesta del API
       if (data.error) {
-        console.error('Error del API:', data.error, data.debug);
+        console.error('❌ Error del API:', data.error, data.debug);
+        setToast({ message: `Error del API: ${data.error}`, type: 'error' });
+        setLoading(false);
+        return;
       }
       
       // Manejar diferentes formatos de respuesta
       let clientesData = [];
       if (Array.isArray(data)) {
         clientesData = data;
+        console.log('✅ Formato: Array directo');
       } else if (data && data.clientes && Array.isArray(data.clientes)) {
         clientesData = data.clientes;
+        console.log('✅ Formato: data.clientes');
       } else if (data && data.data && Array.isArray(data.data)) {
         clientesData = data.data;
+        console.log('✅ Formato: data.data');
+      } else {
+        console.warn('⚠️ Formato de respuesta no reconocido:', Object.keys(data));
       }
       
-      // Debug simple
-      if (clientesData.length > 0) {
-        console.log('✅ Clientes recibidos:', clientesData.length);
-      }
+      console.log('📋 Clientes procesados:', clientesData.length);
       
       // Normalizar campos del API (mapear nombres de Google Sheets a nombres esperados)
       clientesData = clientesData.map((cliente, index) => ({
