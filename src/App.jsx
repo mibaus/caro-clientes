@@ -46,6 +46,8 @@ function App() {
       if (clientesData.length > 0) {
         console.log('🔍 Primer cliente RAW (todos los campos):', clientesData[0]);
         console.log('🔍 Campos disponibles:', Object.keys(clientesData[0]));
+        console.log('🔍 ¿Tiene campo "Última compra"?', clientesData[0]['Última compra']);
+        console.log('🔍 Marca temporal:', clientesData[0]['Marca temporal']);
       }
       
       // Normalizar campos del API (mapear nombres de Google Sheets a nombres esperados)
@@ -117,7 +119,11 @@ function App() {
 
   const handleVentaRegistrada = () => {
     showToast('¡Venta registrada correctamente!', 'success');
-    fetchClientes(); // Recargar clientes para actualizar última compra
+    console.log('♻️ Recargando clientes después de registrar venta...');
+    // Pequeño delay para dar tiempo al Apps Script a actualizar
+    setTimeout(() => {
+      fetchClientes();
+    }, 1000); // 1 segundo de delay
   };
 
   return (
