@@ -17,11 +17,6 @@ function App() {
   const [activeView, setActiveView] = useState('clientes'); // 'clientes' | 'cumpleanos'
   const [toast, setToast] = useState(null);
 
-  // Cargar todos los clientes al inicio
-  useEffect(() => {
-    fetchClientes();
-  }, [fetchClientes]);
-
   const fetchClientes = useCallback(async () => {
     setLoading(true);
     try {
@@ -76,6 +71,12 @@ function App() {
     } finally {
       setLoading(false);
     }
+  }, []);
+
+  // Cargar todos los clientes al inicio
+  useEffect(() => {
+    fetchClientes();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Memoizar cálculo de cumpleaños del día
