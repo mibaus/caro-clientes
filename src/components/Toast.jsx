@@ -1,12 +1,9 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, memo, useCallback } from 'react';
 import { CheckCircle, AlertCircle, X } from 'lucide-react';
 
-const Toast = ({ message, type = 'success', onClose }) => {
+const Toast = memo(({ message, type = 'success', onClose }) => {
   useEffect(() => {
-    const timer = setTimeout(() => {
-      onClose();
-    }, 3000);
-
+    const timer = setTimeout(onClose, 3000);
     return () => clearTimeout(timer);
   }, [onClose]);
 
@@ -29,6 +26,8 @@ const Toast = ({ message, type = 'success', onClose }) => {
       </button>
     </div>
   );
-};
+});
+
+Toast.displayName = 'Toast';
 
 export default Toast;

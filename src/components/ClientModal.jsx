@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, memo } from 'react';
 import { X, ShoppingCart, Eye, User, MapPin, Phone, Calendar, Loader2, MessageCircle } from 'lucide-react';
 
-const ClientModal = ({ cliente, onClose, onVentaRegistrada }) => {
+const ClientModal = memo(({ cliente, onClose, onVentaRegistrada }) => {
   const [view, setView] = useState('options'); // 'options' | 'details'
   const [loading, setLoading] = useState(false);
 
@@ -174,6 +174,8 @@ const ClientModal = ({ cliente, onClose, onVentaRegistrada }) => {
       </div>
     </div>
   );
-};
+});
+
+ClientModal.displayName = 'ClientModal';
 
 export default ClientModal;

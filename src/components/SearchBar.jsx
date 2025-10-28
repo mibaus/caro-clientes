@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, memo } from 'react';
 import { Search, MapPin } from 'lucide-react';
 
-const SearchBar = ({ onSearch, zonas = [] }) => {
+const SearchBar = memo(({ onSearch, zonas = [] }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedZona, setSelectedZona] = useState('');
 
@@ -47,6 +47,8 @@ const SearchBar = ({ onSearch, zonas = [] }) => {
       </div>
     </div>
   );
-};
+});
+
+SearchBar.displayName = 'SearchBar';
 
 export default SearchBar;

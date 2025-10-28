@@ -1,15 +1,16 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { Cake, Users } from 'lucide-react';
+import React, { useState, useEffect, useCallback, useMemo, lazy, Suspense } from 'react';
+import { Cake, Users, Loader2 } from 'lucide-react';
 import SearchBar from './components/SearchBar';
 import ClientList from './components/ClientList';
-import ClientModal from './components/ClientModal';
-import BirthdayView from './components/BirthdayView';
-import Toast from './components/Toast';
+
+// Lazy loading para componentes pesados
+const ClientModal = lazy(() => import('./components/ClientModal'));
+const BirthdayView = lazy(() => import('./components/BirthdayView'));
+const Toast = lazy(() => import('./components/Toast'));
 
 function App() {
   const [clientes, setClientes] = useState([]);
   const [clientesFiltrados, setClientesFiltrados] = useState([]);
-  const [clientesCumpleanos, setClientesCumpleanos] = useState([]);
   const [zonas, setZonas] = useState([]);
   const [loading, setLoading] = useState(false);
   const [selectedCliente, setSelectedCliente] = useState(null);
@@ -19,9 +20,9 @@ function App() {
   // Cargar todos los clientes al inicio
   useEffect(() => {
     fetchClientes();
-  }, []);
+  }, [fetchClientes]);
 
-  const fetchClientes = async () => {
+  const fetchClientes = useCallback(async () => {
     setLoading(true);
     try {
       const response = await fetch('/api/clientes');
@@ -66,60 +67,57 @@ function App() {
         // Extraer zonas únicas
         const zonasUnicas = [...new Set(clientesData.map(c => c.zona).filter(Boolean))];
         setZonas(zonasUnicas);
-        
-        // Filtrar cumpleaños del día
-        const hoy = new Date();
-        const cumpleanos = clientesData.filter(cliente => {
-          if (!cliente.fechaNacimiento) return false;
-          const fechaNac = new Date(cliente.fechaNacimiento);
-          return fechaNac.getDate() === hoy.getDate() && 
-                 fechaNac.getMonth() === hoy.getMonth();
-        });
-        setClientesCumpleanos(cumpleanos);
       } else {
-        showToast('No se encontraron clientes en la respuesta', 'error');
+        setToast({ message: 'No se encontraron clientes en la respuesta', type: 'error' });
       }
     } catch (error) {
       console.error('Error al cargar clientes:', error);
-      showToast('Error al cargar los clientes', 'error');
+      setToast({ message: 'Error al cargar los clientes', type: 'error' });
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
+
+  // Memoizar cálculo de cumpleaños del día
+  const clientesCumpleanosHoy = useMemo(() => {
+    const hoy = new Date();
+    return clientes.filter(cliente => {
+      if (!cliente.fechaNacimiento) return false;
+      const fechaNac = new Date(cliente.fechaNacimiento);
+      return fechaNac.getDate() === hoy.getDate() && 
+             fechaNac.getMonth() === hoy.getMonth();
+    });
+  }, [clientes]);
 
   const handleSearch = useCallback((searchTerm, zona) => {
-    let filtered = [...clientes];
-
-    if (searchTerm) {
-      const term = searchTerm.toLowerCase();
-      filtered = filtered.filter(
-        cliente => {
-          const nombreMatch = cliente.nombre?.toLowerCase().includes(term);
-          const apellidoMatch = cliente.apellido?.toLowerCase().includes(term);
-          return nombreMatch || apellidoMatch;
-        }
-      );
+    if (!searchTerm && !zona) {
+      setClientesFiltrados(clientes);
+      return;
     }
 
-    if (zona) {
-      filtered = filtered.filter(cliente => cliente.zona === zona);
-    }
+    const filtered = clientes.filter(cliente => {
+      const nombreMatch = !searchTerm || cliente.nombre?.toLowerCase().includes(searchTerm.toLowerCase());
+      const apellidoMatch = !searchTerm || cliente.apellido?.toLowerCase().includes(searchTerm.toLowerCase());
+      const zonaMatch = !zona || cliente.zona === zona;
+      
+      return (nombreMatch || apellidoMatch) && zonaMatch;
+    });
 
     setClientesFiltrados(filtered);
   }, [clientes]);
 
-  const showToast = (message, type = 'success') => {
+  const showToast = useCallback((message, type = 'success') => {
     setToast({ message, type });
-  };
+  }, []);
 
-  const handleVentaRegistrada = () => {
+  const handleVentaRegistrada = useCallback(() => {
     showToast('¡Venta registrada correctamente!', 'success');
     console.log('♻️ Recargando clientes después de registrar venta...');
     // Pequeño delay para dar tiempo al Apps Script a actualizar
     setTimeout(() => {
       fetchClientes();
     }, 1000); // 1 segundo de delay
-  };
+  }, [fetchClientes, showToast]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-amber-50 via-stone-50 to-orange-50">
@@ -149,9 +147,9 @@ function App() {
               >
                 <Cake className="w-4 h-4" />
                 Cumpleaños
-                {clientesCumpleanos.length > 0 && (
+                {clientesCumpleanosHoy.length > 0 && (
                   <span className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-xs rounded-full flex items-center justify-center font-bold shadow-md">
-                    {clientesCumpleanos.length}
+                    {clientesCumpleanosHoy.length}
                   </span>
                 )}
               </button>
@@ -177,27 +175,37 @@ function App() {
 
         {activeView === 'cumpleanos' && (
           <div className="bg-white rounded-2xl shadow-sm p-8 border border-stone-200/60">
-            <BirthdayView clientes={clientesCumpleanos} loading={loading} />
+            <Suspense fallback={
+              <div className="flex justify-center items-center py-16">
+                <Loader2 className="w-8 h-8 text-terracotta-600 animate-spin" />
+              </div>
+            }>
+              <BirthdayView clientes={clientesCumpleanosHoy} loading={loading} />
+            </Suspense>
           </div>
         )}
       </main>
 
       {/* Modal */}
       {selectedCliente && (
-        <ClientModal
-          cliente={selectedCliente}
-          onClose={() => setSelectedCliente(null)}
-          onVentaRegistrada={handleVentaRegistrada}
-        />
+        <Suspense fallback={null}>
+          <ClientModal
+            cliente={selectedCliente}
+            onClose={() => setSelectedCliente(null)}
+            onVentaRegistrada={handleVentaRegistrada}
+          />
+        </Suspense>
       )}
 
       {/* Toast */}
       {toast && (
-        <Toast
-          message={toast.message}
-          type={toast.type}
-          onClose={() => setToast(null)}
-        />
+        <Suspense fallback={null}>
+          <Toast
+            message={toast.message}
+            type={toast.type}
+            onClose={() => setToast(null)}
+          />
+        </Suspense>
       )}
     </div>
   );

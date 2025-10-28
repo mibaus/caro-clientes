@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { memo } from 'react';
 import { User, MapPin, Loader2 } from 'lucide-react';
 
-const ClientList = ({ clientes, loading, onSelectCliente }) => {
+const ClientList = memo(({ clientes, loading, onSelectCliente }) => {
   if (loading) {
     return (
       <div className="flex justify-center items-center py-16">
@@ -45,6 +45,8 @@ const ClientList = ({ clientes, loading, onSelectCliente }) => {
       ))}
     </div>
   );
-};
+});
+
+ClientList.displayName = 'ClientList';
 
 export default ClientList;
