@@ -1,36 +1,34 @@
 import React, { useState, memo } from 'react';
-import { X, ShoppingCart, Eye, User, MapPin, Phone, Calendar, Loader2, MessageCircle } from 'lucide-react';
+import { X, ShoppingCart, Eye, User, MapPin, Phone, Calendar, MessageCircle } from 'lucide-react';
 
 const ClientModal = memo(({ cliente, onClose, onVentaRegistrada }) => {
   const [view, setView] = useState('options'); // 'options' | 'details'
-  const [loading, setLoading] = useState(false);
 
   if (!cliente) return null;
 
-  const handleRegistrarVenta = async () => {
-    setLoading(true);
+  const handleRegistrarVenta = () => {
+    // Optimistic update: cerrar inmediatamente y actualizar UI
+    onVentaRegistrada(cliente.id);
+    onClose();
     
-    try {
-      const response = await fetch('/api/ventas', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ clienteID: cliente.id }),
-      });
-
-      const result = await response.json();
-
-      if (response.ok) {
-        onVentaRegistrada();
-        onClose();
-      } else {
-        throw new Error(result.error || 'Error al registrar la venta');
+    // Llamada al API en background (no esperamos)
+    fetch('/api/ventas', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ clienteID: cliente.id }),
+    })
+    .then(response => response.json())
+    .then(result => {
+      if (!result.success && result.error) {
+        console.error('Error al registrar venta:', result.error);
+        // En caso de error, podrías mostrar una notificación
+        // pero el usuario ya continuó con su trabajo
       }
-    } catch (error) {
+    })
+    .catch(error => {
       console.error('Error al registrar venta:', error);
-      alert('Hubo un error al registrar la venta. Por favor, intenta nuevamente.');
-    } finally {
-      setLoading(false);
-    }
+      // El error se registra pero no interrumpe la experiencia del usuario
+    });
   };
 
   const formatFecha = (fecha) => {
@@ -91,17 +89,10 @@ const ClientModal = memo(({ cliente, onClose, onVentaRegistrada }) => {
             <div className="space-y-3.5">
               <button
                 onClick={handleRegistrarVenta}
-                disabled={loading}
-                className="w-full flex items-center justify-center gap-3 bg-terracotta-600 hover:bg-terracotta-700 text-white py-4 rounded-xl font-semibold transition-all duration-200 shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full flex items-center justify-center gap-3 bg-terracotta-600 hover:bg-terracotta-700 text-white py-4 rounded-xl font-semibold transition-all duration-200 shadow-md hover:shadow-lg"
               >
-                {loading ? (
-                  <Loader2 className="w-5 h-5 animate-spin" />
-                ) : (
-                  <>
-                    <ShoppingCart className="w-5 h-5" />
-                    Registrar Venta
-                  </>
-                )}
+                <ShoppingCart className="w-5 h-5" />
+                Registrar Venta
               </button>
               <button
                 onClick={() => setView('details')}

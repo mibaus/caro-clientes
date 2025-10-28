@@ -111,14 +111,28 @@ function App() {
     setToast({ message, type });
   }, []);
 
-  const handleVentaRegistrada = useCallback(() => {
+  const handleVentaRegistrada = useCallback((clienteID) => {
     showToast('¡Venta registrada correctamente!', 'success');
-    console.log('♻️ Recargando clientes después de registrar venta...');
-    // Pequeño delay para dar tiempo al Apps Script a actualizar
-    setTimeout(() => {
-      fetchClientes();
-    }, 1000); // 1 segundo de delay
-  }, [fetchClientes, showToast]);
+    
+    // Actualización optimista: actualizar solo el cliente localmente
+    const fechaHoy = new Date().toISOString();
+    
+    setClientes(prevClientes => 
+      prevClientes.map(c => 
+        c.id === clienteID 
+          ? { ...c, ultimaCompra: fechaHoy }
+          : c
+      )
+    );
+    
+    setClientesFiltrados(prevFiltrados => 
+      prevFiltrados.map(c => 
+        c.id === clienteID 
+          ? { ...c, ultimaCompra: fechaHoy }
+          : c
+      )
+    );
+  }, [showToast]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-amber-50 via-stone-50 to-orange-50">
