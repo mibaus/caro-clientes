@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useMemo, lazy, Suspense } from 'react';
-import { Cake, Users, Loader2, LogOut } from 'lucide-react';
+import { Cake, Users, Loader2 } from 'lucide-react';
 import SearchBar from './components/SearchBar';
 import ClientList from './components/ClientList';
 import Login from './components/Login';
@@ -149,13 +149,6 @@ function App() {
     setIsAuthenticated(true);
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem('isAuthenticated');
-    sessionStorage.removeItem('isAuthenticated');
-    setIsAuthenticated(false);
-    showToast('Sesión cerrada correctamente', 'success');
-  };
-
   // Mostrar Login si no está autenticado
   if (!isAuthenticated) {
     return <Login onLogin={handleLogin} />;
@@ -166,7 +159,7 @@ function App() {
       {/* Header */}
       <header className="bg-white border-b border-stone-200 shadow-sm sticky top-0 z-40">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16 py-4">
+          <div className="flex items-center justify-center h-16 py-4">
             <nav className="flex gap-1 bg-stone-100 p-1 rounded-xl">
               <button
                 onClick={() => setActiveView('clientes')}
@@ -196,16 +189,6 @@ function App() {
                 )}
               </button>
             </nav>
-
-            {/* Logout Button */}
-            <button
-              onClick={handleLogout}
-              className="flex items-center gap-2 px-4 py-2 text-stone-600 hover:text-terracotta-600 hover:bg-stone-100 rounded-lg transition-all duration-200 font-medium"
-              title="Cerrar sesión"
-            >
-              <LogOut className="w-4 h-4" />
-              <span className="hidden sm:inline">Salir</span>
-            </button>
           </div>
         </div>
       </header>
