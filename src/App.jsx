@@ -122,25 +122,25 @@ function App() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
+    <div className="min-h-screen bg-gradient-to-br from-amber-50 via-stone-50 to-orange-50">
       {/* Header */}
-      <header className="bg-white border-b border-gray-200 shadow-sm sticky top-0 z-40">
+      <header className="bg-white border-b border-stone-200 shadow-sm sticky top-0 z-40">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
+          <div className="flex items-center justify-between h-20 py-4">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-lavender-500 to-lavender-600 flex items-center justify-center">
+              <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-terracotta-600 to-terracotta-700 flex items-center justify-center shadow-md">
                 <Users className="w-6 h-6 text-white" />
               </div>
-              <h1 className="text-xl font-bold text-gray-900">Gestión de Clientes</h1>
+              <h1 className="text-2xl font-bold text-stone-800 tracking-tight">Gestión de Clientes</h1>
             </div>
 
-            <nav className="flex gap-2">
+            <nav className="flex gap-1 bg-stone-100 p-1 rounded-xl">
               <button
                 onClick={() => setActiveView('clientes')}
-                className={`flex items-center gap-2 px-4 py-2 rounded-xl font-medium transition-all duration-200 ${
+                className={`flex items-center gap-2 px-5 py-2.5 rounded-lg font-semibold transition-all duration-200 ${
                   activeView === 'clientes'
-                    ? 'bg-lavender-100 text-lavender-700'
-                    : 'text-gray-600 hover:bg-gray-100'
+                    ? 'bg-white text-terracotta-700 shadow-sm'
+                    : 'text-stone-600 hover:text-stone-800'
                 }`}
               >
                 <Users className="w-4 h-4" />
@@ -148,16 +148,16 @@ function App() {
               </button>
               <button
                 onClick={() => setActiveView('cumpleanos')}
-                className={`flex items-center gap-2 px-4 py-2 rounded-xl font-medium transition-all duration-200 relative ${
+                className={`flex items-center gap-2 px-5 py-2.5 rounded-lg font-semibold transition-all duration-200 relative ${
                   activeView === 'cumpleanos'
-                    ? 'bg-lavender-100 text-lavender-700'
-                    : 'text-gray-600 hover:bg-gray-100'
+                    ? 'bg-white text-terracotta-700 shadow-sm'
+                    : 'text-stone-600 hover:text-stone-800'
                 }`}
               >
                 <Cake className="w-4 h-4" />
                 Cumpleaños
                 {clientesCumpleanos.length > 0 && (
-                  <span className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-xs rounded-full flex items-center justify-center font-bold">
+                  <span className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-xs rounded-full flex items-center justify-center font-bold shadow-md">
                     {clientesCumpleanos.length}
                   </span>
                 )}
@@ -168,11 +168,11 @@ function App() {
       </header>
 
       {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
         {activeView === 'clientes' && (
           <div className="space-y-6">
             <SearchBar onSearch={handleSearch} zonas={zonas} />
-            <div className="bg-white rounded-2xl shadow-sm p-6 border border-gray-100">
+            <div className="bg-white rounded-2xl shadow-sm p-8 border border-stone-200/60">
               <ClientList
                 clientes={clientesFiltrados}
                 loading={loading}
@@ -183,7 +183,7 @@ function App() {
         )}
 
         {activeView === 'cumpleanos' && (
-          <div className="bg-white rounded-2xl shadow-sm p-6 border border-gray-100">
+          <div className="bg-white rounded-2xl shadow-sm p-8 border border-stone-200/60">
             <BirthdayView clientes={clientesCumpleanos} loading={loading} />
           </div>
         )}
