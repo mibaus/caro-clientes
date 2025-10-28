@@ -44,9 +44,11 @@ function App() {
       
       // Debug: mostrar TODOS los campos del primer cliente
       if (clientesData.length > 0) {
+        console.log('🔍 TODOS LOS CLIENTES RAW:', clientesData);
         console.log('🔍 Primer cliente RAW (todos los campos):', clientesData[0]);
         console.log('🔍 Campos disponibles:', Object.keys(clientesData[0]));
         console.log('🔍 ¿Tiene campo "Última compra"?', clientesData[0]['Última compra']);
+        console.log('🔍 Valor exacto:', JSON.stringify(clientesData[0]['Última compra']));
         console.log('🔍 Marca temporal:', clientesData[0]['Marca temporal']);
       }
       
