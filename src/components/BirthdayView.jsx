@@ -5,13 +5,23 @@ const BirthdayView = ({ clientes, loading }) => {
   const enviarMensajeWhatsApp = (cliente) => {
     const mensaje = `¡Feliz cumpleaños ${cliente.nombre}! 🎉 Queremos darte un regalo especial. Pasá hoy por la tienda y aprovechá tu descuento.`;
     const mensajeCodificado = encodeURIComponent(mensaje);
-    const telefono = cliente.telefono?.replace(/\D/g, ''); // Eliminar caracteres no numéricos
+    
+    // Convertir a string y eliminar caracteres no numéricos
+    let telefono = String(cliente.telefono || '').replace(/\D/g, '');
     
     if (!telefono) {
       alert('Este cliente no tiene un número de teléfono registrado.');
       return;
     }
-
+    
+    // Si no tiene código de país, agregar 549 (Argentina con 9 para celulares)
+    if (telefono.length === 10 && !telefono.startsWith('549')) {
+      telefono = '549' + telefono;
+    } else if (telefono.length === 10 && !telefono.startsWith('54')) {
+      telefono = '54' + telefono;
+    }
+    
+    console.log('Abriendo WhatsApp para:', telefono);
     window.open(`https://wa.me/${telefono}?text=${mensajeCodificado}`, '_blank');
   };
 
