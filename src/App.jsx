@@ -119,13 +119,16 @@ function App() {
         const telefonoLimpio = cliente.telefono.replace(/\D/g, ''); // Eliminar caracteres no numéricos
         const searchLimpio = searchTerm.replace(/\D/g, '');
         
-        // Buscar por número completo o parcial
-        telefonoMatch = telefonoLimpio.includes(searchLimpio);
-        
-        // Si el término de búsqueda tiene 4 dígitos o menos, también buscar en los últimos dígitos
-        if (searchLimpio.length <= 4 && searchLimpio.length > 0) {
-          const ultimosDigitos = telefonoLimpio.slice(-searchLimpio.length);
-          telefonoMatch = telefonoMatch || ultimosDigitos === searchLimpio;
+        // Solo buscar por teléfono si el término de búsqueda contiene números
+        if (searchLimpio.length > 0) {
+          // Buscar por número completo o parcial
+          telefonoMatch = telefonoLimpio.includes(searchLimpio);
+          
+          // Si el término de búsqueda tiene 4 dígitos o menos, también buscar en los últimos dígitos
+          if (searchLimpio.length <= 4) {
+            const ultimosDigitos = telefonoLimpio.slice(-searchLimpio.length);
+            telefonoMatch = telefonoMatch || ultimosDigitos === searchLimpio;
+          }
         }
       }
       
