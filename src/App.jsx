@@ -102,59 +102,69 @@ function App() {
     });
   }, [clientes]);
 
-  const handleSearch = useCallback((searchTerm, zona, ultimaCompra) => {
+  const handleSearch = useCallback((searchTerm = '', zona = '', ultimaCompra = '') => {
+    // Si no hay filtros, mostrar todos
     if (!searchTerm && !zona && !ultimaCompra) {
       setClientesFiltrados(clientes);
       return;
     }
 
     const filtered = clientes.filter(cliente => {
-      // Filtro por zona
-      const zonaMatch = !zona || cliente.zona === zona;
-      
-      // Filtro por última compra
-      let ultimaCompraMatch = true;
-      if (ultimaCompra && cliente.ultimaCompra) {
-        const fechaUltimaCompra = new Date(cliente.ultimaCompra);
-        const hoy = new Date();
-        const diferenciaDias = Math.floor((hoy - fechaUltimaCompra) / (1000 * 60 * 60 * 24));
-        ultimaCompraMatch = diferenciaDias >= parseInt(ultimaCompra);
-      } else if (ultimaCompra && !cliente.ultimaCompra) {
-        // Si se filtra por última compra pero el cliente no tiene fecha, incluirlo
-        ultimaCompraMatch = true;
+      // 1. Filtro por zona
+      if (zona && cliente.zona !== zona) {
+        return false;
       }
       
-      // Filtro por término de búsqueda (nombre, apellido o teléfono)
-      let searchMatch = true;
+      // 2. Filtro por última compra
+      if (ultimaCompra) {
+        if (cliente.ultimaCompra) {
+          const fechaUltimaCompra = new Date(cliente.ultimaCompra);
+          const hoy = new Date();
+          const diferenciaDias = Math.floor((hoy - fechaUltimaCompra) / (1000 * 60 * 60 * 24));
+          if (diferenciaDias < parseInt(ultimaCompra)) {
+            return false;
+          }
+        }
+        // Si no tiene fecha de compra, incluirlo de todas formas
+      }
+      
+      // 3. Filtro por término de búsqueda
       if (searchTerm) {
         const searchLower = searchTerm.toLowerCase().trim();
         
-        // Búsqueda por nombre o apellido
-        const nombreMatch = cliente.nombre?.toLowerCase().includes(searchLower);
-        const apellidoMatch = cliente.apellido?.toLowerCase().includes(searchLower);
+        // Búsqueda por nombre
+        const nombreMatch = cliente.nombre && cliente.nombre.toLowerCase().includes(searchLower);
+        // Búsqueda por apellido
+        const apellidoMatch = cliente.apellido && cliente.apellido.toLowerCase().includes(searchLower);
         
         // Búsqueda por teléfono
         let telefonoMatch = false;
-        if (cliente.telefono) {
-          const telefonoLimpio = cliente.telefono.replace(/\D/g, '');
-          const searchLimpio = searchTerm.replace(/\D/g, '');
+        const searchLimpio = searchTerm.replace(/\D/g, '');
+        
+        if (searchLimpio && cliente.telefono) {
+          const telefonoLimpio = String(cliente.telefono).replace(/\D/g, '');
           
-          if (searchLimpio.length > 0) {
-            // Buscar por número completo o parcial
-            telefonoMatch = telefonoLimpio.includes(searchLimpio);
-            
-            // Búsqueda por últimos dígitos
-            if (searchLimpio.length <= 4) {
-              const ultimosDigitos = telefonoLimpio.slice(-searchLimpio.length);
-              telefonoMatch = telefonoMatch || ultimosDigitos === searchLimpio;
+          // Buscar por número completo o parcial
+          if (telefonoLimpio.includes(searchLimpio)) {
+            telefonoMatch = true;
+          }
+          
+          // O por últimos 4 dígitos
+          if (searchLimpio.length <= 4 && searchLimpio.length > 0) {
+            const ultimosDigitos = telefonoLimpio.slice(-searchLimpio.length);
+            if (ultimosDigitos === searchLimpio) {
+              telefonoMatch = true;
             }
           }
         }
         
-        searchMatch = nombreMatch || apellidoMatch || telefonoMatch;
+        // Si no matchea ninguno, filtrar
+        if (!nombreMatch && !apellidoMatch && !telefonoMatch) {
+          return false;
+        }
       }
       
-      return searchMatch && zonaMatch && ultimaCompraMatch;
+      return true;
     });
 
     setClientesFiltrados(filtered);
