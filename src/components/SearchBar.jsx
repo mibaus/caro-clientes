@@ -22,7 +22,7 @@ const SearchBar = memo(({ onSearch, zonas = [] }) => {
           <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-stone-400 w-5 h-5" />
           <input
             type="text"
-            placeholder="Buscar cliente por nombre..."
+            placeholder="Buscar por nombre o teléfono..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="w-full pl-12 pr-4 py-3.5 rounded-xl border border-stone-200 focus:outline-none focus:ring-2 focus:ring-terracotta-400 focus:border-transparent transition-all duration-200 bg-white text-stone-900 placeholder:text-stone-400"
