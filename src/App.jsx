@@ -102,8 +102,8 @@ function App() {
     });
   }, [clientes]);
 
-  const handleSearch = useCallback((searchTerm, zona) => {
-    if (!searchTerm && !zona) {
+  const handleSearch = useCallback((searchTerm, zona, ultimaCompra) => {
+    if (!searchTerm && !zona && !ultimaCompra) {
       setClientesFiltrados(clientes);
       return;
     }
@@ -113,7 +113,19 @@ function App() {
       const apellidoMatch = !searchTerm || cliente.apellido?.toLowerCase().includes(searchTerm.toLowerCase());
       const zonaMatch = !zona || cliente.zona === zona;
       
-      return (nombreMatch || apellidoMatch) && zonaMatch;
+      // Filtro por última compra
+      let ultimaCompraMatch = true;
+      if (ultimaCompra && cliente.ultimaCompra) {
+        const fechaUltimaCompra = new Date(cliente.ultimaCompra);
+        const hoy = new Date();
+        const diferenciaDias = Math.floor((hoy - fechaUltimaCompra) / (1000 * 60 * 60 * 24));
+        ultimaCompraMatch = diferenciaDias >= parseInt(ultimaCompra);
+      } else if (ultimaCompra && !cliente.ultimaCompra) {
+        // Si se filtra por última compra pero el cliente no tiene fecha, incluirlo
+        ultimaCompraMatch = true;
+      }
+      
+      return (nombreMatch || apellidoMatch) && zonaMatch && ultimaCompraMatch;
     });
 
     setClientesFiltrados(filtered);

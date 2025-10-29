@@ -1,5 +1,34 @@
 import { memo } from 'react';
-import { User, MapPin, Loader2 } from 'lucide-react';
+import { User, MapPin, Loader2, Clock } from 'lucide-react';
+
+// Función para calcular días desde la última compra
+const calcularDiasDesdeCompra = (fechaCompra) => {
+  if (!fechaCompra) return null;
+  const fecha = new Date(fechaCompra);
+  const hoy = new Date();
+  const diferencia = Math.floor((hoy - fecha) / (1000 * 60 * 60 * 24));
+  return diferencia;
+};
+
+// Función para formatear el texto de días
+const formatearDiasCompra = (dias) => {
+  if (dias === null) return 'Sin registro';
+  if (dias === 0) return 'Hoy';
+  if (dias === 1) return 'Ayer';
+  if (dias < 30) return `Hace ${dias} días`;
+  if (dias < 60) return `Hace +30 días`;
+  if (dias < 90) return `Hace +60 días`;
+  return `Hace +90 días`;
+};
+
+// Función para obtener el color según los días
+const obtenerColorDias = (dias) => {
+  if (dias === null) return 'text-stone-400';
+  if (dias < 30) return 'text-green-600';
+  if (dias < 60) return 'text-yellow-600';
+  if (dias < 90) return 'text-orange-600';
+  return 'text-red-600';
+};
 
 const ClientList = memo(({ clientes, loading, onSelectCliente }) => {
   if (loading) {
@@ -35,9 +64,15 @@ const ClientList = memo(({ clientes, loading, onSelectCliente }) => {
               <h3 className="text-lg font-bold text-stone-900 truncate leading-tight mb-1.5">
                 {cliente.nombre} {cliente.apellido}
               </h3>
-              <div className="flex items-center gap-1.5 text-sm text-stone-500">
-                <MapPin className="w-3.5 h-3.5 flex-shrink-0" />
-                <span className="truncate">{cliente.zona || 'Sin zona'}</span>
+              <div className="space-y-1">
+                <div className="flex items-center gap-1.5 text-sm text-stone-500">
+                  <MapPin className="w-3.5 h-3.5 flex-shrink-0" />
+                  <span className="truncate">{cliente.zona || 'Sin zona'}</span>
+                </div>
+                <div className={`flex items-center gap-1.5 text-sm font-medium ${obtenerColorDias(calcularDiasDesdeCompra(cliente.ultimaCompra))}`}>
+                  <Clock className="w-3.5 h-3.5 flex-shrink-0" />
+                  <span className="truncate">{formatearDiasCompra(calcularDiasDesdeCompra(cliente.ultimaCompra))}</span>
+                </div>
               </div>
             </div>
           </div>
