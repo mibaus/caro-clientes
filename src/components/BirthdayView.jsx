@@ -3,8 +3,8 @@ import { Cake, MapPin, MessageCircle, PartyPopper, Loader2 } from 'lucide-react'
 
 const BirthdayView = memo(({ clientes, loading }) => {
   const enviarMensajeWhatsApp = (cliente) => {
-    // Usar saltos de línea compatibles con WhatsApp (%0A)
-    const mensaje = `*¡Feliz cumpleaños, ${cliente.nombre}!* 🎉%0A%0AEl equipo de *Caro Righetti Cocina de Autor* te desea un nuevo año lleno de sabores, emociones y momentos únicos.%0A%0AEsta semana queremos agasajarte con una *copa de bienvenida sin cargo* y un beneficio especial para que disfrutes de una cena inolvidable.%0A%0A¡Te esperamos para celebrar juntos! 🍷`;
+    // Mensaje sin emojis para evitar problemas de codificación
+    const mensaje = `*Feliz cumpleanos, ${cliente.nombre}!*%0A%0AEl equipo de *Caro Righetti Cocina de Autor* te desea un nuevo ano lleno de sabores, emociones y momentos unicos.%0A%0AEsta semana queremos agasajarte con una *copa de bienvenida sin cargo* y un beneficio especial para que disfrutes de una cena inolvidable.%0A%0ATe esperamos para celebrar juntos!`;
     const mensajeCodificado = mensaje;
     
     // Convertir a string y eliminar caracteres no numéricos
