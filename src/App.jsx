@@ -94,12 +94,56 @@ function App() {
   // Memoizar cálculo de cumpleaños del día
   const clientesCumpleanosHoy = useMemo(() => {
     const hoy = new Date();
-    return clientes.filter(cliente => {
+    const diaHoy = hoy.getDate();
+    const mesHoy = hoy.getMonth(); // 0-11
+    
+    console.log(`🎂 Buscando cumpleaños para: ${diaHoy}/${mesHoy + 1}/${hoy.getFullYear()}`);
+    
+    const cumpleaneros = clientes.filter(cliente => {
       if (!cliente.fechaNacimiento) return false;
-      const fechaNac = new Date(cliente.fechaNacimiento);
-      return fechaNac.getDate() === hoy.getDate() && 
-             fechaNac.getMonth() === hoy.getMonth();
+      
+      let fechaNac;
+      const fechaStr = String(cliente.fechaNacimiento).trim();
+      
+      // Parsear diferentes formatos de fecha
+      if (fechaStr.includes('/')) {
+        // Formato DD/MM/YYYY o MM/DD/YYYY
+        const partes = fechaStr.split('/');
+        if (partes.length === 3) {
+          // Asumimos DD/MM/YYYY (formato común en Latinoamérica)
+          const dia = parseInt(partes[0], 10);
+          const mes = parseInt(partes[1], 10) - 1; // Mes 0-11
+          const anio = parseInt(partes[2], 10);
+          fechaNac = new Date(anio, mes, dia);
+        }
+      } else if (fechaStr.includes('-')) {
+        // Formato ISO: YYYY-MM-DD
+        fechaNac = new Date(fechaStr);
+      } else {
+        // Intentar parsear como está
+        fechaNac = new Date(fechaStr);
+      }
+      
+      // Validar que la fecha sea válida
+      if (isNaN(fechaNac.getTime())) {
+        console.log(`❌ Fecha inválida para ${cliente.nombre}: ${fechaStr}`);
+        return false;
+      }
+      
+      const diaNac = fechaNac.getDate();
+      const mesNac = fechaNac.getMonth();
+      
+      const esCumpleanos = diaNac === diaHoy && mesNac === mesHoy;
+      
+      if (esCumpleanos) {
+        console.log(`🎉 ¡Cumpleaños! ${cliente.nombre} - Fecha original: ${fechaStr} - Parseada: ${diaNac}/${mesNac + 1}`);
+      }
+      
+      return esCumpleanos;
     });
+    
+    console.log(`✅ Total cumpleañeros encontrados: ${cumpleaneros.length}`);
+    return cumpleaneros;
   }, [clientes]);
 
   const handleSearch = useCallback((searchTerm = '', zona = '', ultimaCompra = '') => {
