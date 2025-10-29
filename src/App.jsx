@@ -97,13 +97,24 @@ function App() {
     const diaHoy = hoy.getDate();
     const mesHoy = hoy.getMonth(); // 0-11
     
-    console.log(`🎂 Buscando cumpleaños para: ${diaHoy}/${mesHoy + 1}/${hoy.getFullYear()}`);
+    console.log('=== DEBUG CUMPLEAÑOS ===');
+    console.log(`📅 Fecha de hoy: ${diaHoy}/${mesHoy + 1}/${hoy.getFullYear()}`);
+    console.log(`👥 Total de clientes cargados: ${clientes.length}`);
+    
+    // Mostrar todas las fechas de nacimiento
+    clientes.forEach((cliente, idx) => {
+      if (cliente.fechaNacimiento) {
+        console.log(`${idx + 1}. ${cliente.nombre} - Fecha: "${cliente.fechaNacimiento}"`);
+      }
+    });
     
     const cumpleaneros = clientes.filter(cliente => {
       if (!cliente.fechaNacimiento) return false;
       
       let fechaNac;
       const fechaStr = String(cliente.fechaNacimiento).trim();
+      
+      console.log(`\n🔍 Procesando: ${cliente.nombre} - "${fechaStr}"`);
       
       // Parsear diferentes formatos de fecha
       if (fechaStr.includes('/')) {
@@ -115,34 +126,42 @@ function App() {
           const mes = parseInt(partes[1], 10) - 1; // Mes 0-11
           const anio = parseInt(partes[2], 10);
           fechaNac = new Date(anio, mes, dia);
+          console.log(`   Parseado DD/MM/YYYY → día: ${dia}, mes: ${mes + 1}, año: ${anio}`);
         }
       } else if (fechaStr.includes('-')) {
         // Formato ISO: YYYY-MM-DD
         fechaNac = new Date(fechaStr);
+        console.log(`   Parseado ISO → ${fechaNac.getDate()}/${fechaNac.getMonth() + 1}/${fechaNac.getFullYear()}`);
       } else {
         // Intentar parsear como está
         fechaNac = new Date(fechaStr);
+        console.log(`   Parseado genérico → ${fechaNac}`);
       }
       
       // Validar que la fecha sea válida
       if (isNaN(fechaNac.getTime())) {
-        console.log(`❌ Fecha inválida para ${cliente.nombre}: ${fechaStr}`);
+        console.log(`   ❌ FECHA INVÁLIDA`);
         return false;
       }
       
       const diaNac = fechaNac.getDate();
       const mesNac = fechaNac.getMonth();
       
+      console.log(`   Comparando: ${diaNac}/${mesNac + 1} vs ${diaHoy}/${mesHoy + 1}`);
+      
       const esCumpleanos = diaNac === diaHoy && mesNac === mesHoy;
       
       if (esCumpleanos) {
-        console.log(`🎉 ¡Cumpleaños! ${cliente.nombre} - Fecha original: ${fechaStr} - Parseada: ${diaNac}/${mesNac + 1}`);
+        console.log(`   🎉 ¡ES CUMPLEAÑOS!`);
+      } else {
+        console.log(`   ⚪ No es cumpleaños`);
       }
       
       return esCumpleanos;
     });
     
-    console.log(`✅ Total cumpleañeros encontrados: ${cumpleaneros.length}`);
+    console.log(`\n✅ Total cumpleañeros encontrados: ${cumpleaneros.length}`);
+    console.log('=== FIN DEBUG ===\n');
     return cumpleaneros;
   }, [clientes]);
 
