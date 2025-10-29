@@ -109,29 +109,7 @@ function App() {
     }
 
     const filtered = clientes.filter(cliente => {
-      // Búsqueda por nombre y apellido
-      const nombreMatch = !searchTerm || cliente.nombre?.toLowerCase().includes(searchTerm.toLowerCase());
-      const apellidoMatch = !searchTerm || cliente.apellido?.toLowerCase().includes(searchTerm.toLowerCase());
-      
-      // Búsqueda por teléfono (número completo o últimos 4 dígitos)
-      let telefonoMatch = false;
-      if (searchTerm && cliente.telefono) {
-        const telefonoLimpio = cliente.telefono.replace(/\D/g, ''); // Eliminar caracteres no numéricos
-        const searchLimpio = searchTerm.replace(/\D/g, '');
-        
-        // Solo buscar por teléfono si el término de búsqueda contiene números
-        if (searchLimpio.length > 0) {
-          // Buscar por número completo o parcial
-          telefonoMatch = telefonoLimpio.includes(searchLimpio);
-          
-          // Si el término de búsqueda tiene 4 dígitos o menos, también buscar en los últimos dígitos
-          if (searchLimpio.length <= 4) {
-            const ultimosDigitos = telefonoLimpio.slice(-searchLimpio.length);
-            telefonoMatch = telefonoMatch || ultimosDigitos === searchLimpio;
-          }
-        }
-      }
-      
+      // Filtro por zona
       const zonaMatch = !zona || cliente.zona === zona;
       
       // Filtro por última compra
@@ -146,7 +124,37 @@ function App() {
         ultimaCompraMatch = true;
       }
       
-      return (nombreMatch || apellidoMatch || telefonoMatch) && zonaMatch && ultimaCompraMatch;
+      // Filtro por término de búsqueda (nombre, apellido o teléfono)
+      let searchMatch = true;
+      if (searchTerm) {
+        const searchLower = searchTerm.toLowerCase().trim();
+        
+        // Búsqueda por nombre o apellido
+        const nombreMatch = cliente.nombre?.toLowerCase().includes(searchLower);
+        const apellidoMatch = cliente.apellido?.toLowerCase().includes(searchLower);
+        
+        // Búsqueda por teléfono
+        let telefonoMatch = false;
+        if (cliente.telefono) {
+          const telefonoLimpio = cliente.telefono.replace(/\D/g, '');
+          const searchLimpio = searchTerm.replace(/\D/g, '');
+          
+          if (searchLimpio.length > 0) {
+            // Buscar por número completo o parcial
+            telefonoMatch = telefonoLimpio.includes(searchLimpio);
+            
+            // Búsqueda por últimos dígitos
+            if (searchLimpio.length <= 4) {
+              const ultimosDigitos = telefonoLimpio.slice(-searchLimpio.length);
+              telefonoMatch = telefonoMatch || ultimosDigitos === searchLimpio;
+            }
+          }
+        }
+        
+        searchMatch = nombreMatch || apellidoMatch || telefonoMatch;
+      }
+      
+      return searchMatch && zonaMatch && ultimaCompraMatch;
     });
 
     setClientesFiltrados(filtered);
