@@ -3,16 +3,14 @@ import { Cake, MapPin, MessageCircle, PartyPopper, Loader2 } from 'lucide-react'
 
 const BirthdayView = memo(({ clientes, loading }) => {
   const enviarMensajeWhatsApp = (cliente) => {
-    // Mensaje simple sin emojis problemáticos, usando solo texto
-    const mensaje = `*¡Feliz cumpleaños, ${cliente.nombre}!*
+    // Mensaje con emojis
+    const mensaje = `*¡Feliz cumpleaños, ${cliente.nombre}!* 🎉
 
 El equipo de *Caro Righetti Cocina de Autor* te desea un nuevo año lleno de sabores, emociones y momentos únicos.
 
 Esta semana queremos agasajarte con una *copa de bienvenida sin cargo* y un beneficio especial para que disfrutes de una cena inolvidable.
 
-¡Te esperamos para celebrar juntos!`;
-    
-    const mensajeCodificado = encodeURIComponent(mensaje);
+¡Te esperamos para celebrar juntos! 🍷`;
     
     // Convertir a string y eliminar caracteres no numéricos
     let telefono = String(cliente.telefono || '').replace(/\D/g, '');
@@ -29,7 +27,10 @@ Esta semana queremos agasajarte con una *copa de bienvenida sin cargo* y un bene
       telefono = '54' + telefono;
     }
     
-    window.open(`https://wa.me/${telefono}?text=${mensajeCodificado}`, '_blank');
+    // Usar URLSearchParams para codificar correctamente los emojis
+    const params = new URLSearchParams({ text: mensaje });
+    const url = `https://wa.me/${telefono}?${params.toString()}`;
+    window.open(url, '_blank');
   };
 
   if (loading) {
