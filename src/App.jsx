@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useMemo, lazy, Suspense } from 'react';
-import { Cake, Users, Loader2 } from 'lucide-react';
+import { Cake, Users, Loader2, Menu, X, UserPlus } from 'lucide-react';
 import SearchBar from './components/SearchBar';
 import ClientList from './components/ClientList';
 import Login from './components/Login';
@@ -16,8 +16,9 @@ function App() {
   const [zonas, setZonas] = useState([]);
   const [loading, setLoading] = useState(false);
   const [selectedCliente, setSelectedCliente] = useState(null);
-  const [activeView, setActiveView] = useState('clientes'); // 'clientes' | 'cumpleanos'
+  const [activeView, setActiveView] = useState('clientes'); // 'clientes' | 'cumpleanos' | 'nuevos'
   const [toast, setToast] = useState(null);
+  const [menuOpen, setMenuOpen] = useState(false);
 
   // Verificar autenticación al cargar
   useEffect(() => {
@@ -90,6 +91,18 @@ function App() {
     fetchClientes();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // Memoizar clientes nuevos (ordenados por última compra)
+  const clientesNuevos = useMemo(() => {
+    return [...clientes]
+      .filter(c => c.ultimaCompra) // Solo clientes con compras registradas
+      .sort((a, b) => {
+        const fechaA = new Date(a.ultimaCompra);
+        const fechaB = new Date(b.ultimaCompra);
+        return fechaB - fechaA; // Más recientes primero
+      })
+      .slice(0, 20); // Mostrar los 20 más recientes
+  }, [clientes]);
 
   // Memoizar cálculo de cumpleaños del día
   const clientesCumpleanosHoy = useMemo(() => {
@@ -274,39 +287,108 @@ function App() {
       {/* Header */}
       <header className="bg-white border-b border-stone-200 shadow-sm sticky top-0 z-40">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-center h-16 py-4">
-            <nav className="flex gap-1 bg-stone-100 p-1 rounded-xl">
-              <button
-                onClick={() => setActiveView('clientes')}
-                className={`flex items-center gap-2 px-5 py-2.5 rounded-lg font-semibold transition-all duration-200 ${
-                  activeView === 'clientes'
-                    ? 'bg-white text-terracotta-700 shadow-sm'
-                    : 'text-stone-600 hover:text-stone-800'
-                }`}
-              >
-                <Users className="w-4 h-4" />
-                Clientes
-              </button>
-              <button
-                onClick={() => setActiveView('cumpleanos')}
-                className={`flex items-center gap-2 px-5 py-2.5 rounded-lg font-semibold transition-all duration-200 relative ${
-                  activeView === 'cumpleanos'
-                    ? 'bg-white text-terracotta-700 shadow-sm'
-                    : 'text-stone-600 hover:text-stone-800'
-                }`}
-              >
-                <Cake className="w-4 h-4" />
-                Cumpleaños
-                {clientesCumpleanosHoy.length > 0 && (
-                  <span className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-xs rounded-full flex items-center justify-center font-bold shadow-md">
-                    {clientesCumpleanosHoy.length}
-                  </span>
-                )}
-              </button>
-            </nav>
+          <div className="flex items-center justify-between h-16 py-4">
+            {/* Logo/Título */}
+            <div className="flex items-center gap-3">
+              <Users className="w-6 h-6 text-terracotta-600" />
+              <h1 className="text-xl font-bold text-stone-900">Gestión de Clientes</h1>
+            </div>
+            
+            {/* Menú Hamburguesa */}
+            <button
+              onClick={() => setMenuOpen(!menuOpen)}
+              className="p-2 rounded-lg hover:bg-stone-100 transition-colors duration-200"
+              aria-label="Menú"
+            >
+              {menuOpen ? (
+                <X className="w-6 h-6 text-stone-700" />
+              ) : (
+                <Menu className="w-6 h-6 text-stone-700" />
+              )}
+            </button>
           </div>
         </div>
       </header>
+
+      {/* Menú Lateral */}
+      {menuOpen && (
+        <>
+          {/* Overlay */}
+          <div 
+            className="fixed inset-0 bg-black/30 z-40 backdrop-blur-sm"
+            onClick={() => setMenuOpen(false)}
+          />
+          
+          {/* Drawer */}
+          <div className="fixed top-0 right-0 h-full w-80 bg-white shadow-2xl z-50 transform transition-transform duration-300">
+            <div className="p-6">
+              {/* Header del menú */}
+              <div className="flex items-center justify-between mb-8">
+                <h2 className="text-lg font-bold text-stone-900">Menú</h2>
+                <button
+                  onClick={() => setMenuOpen(false)}
+                  className="p-2 rounded-lg hover:bg-stone-100 transition-colors duration-200"
+                >
+                  <X className="w-5 h-5 text-stone-700" />
+                </button>
+              </div>
+
+              {/* Opciones del menú */}
+              <nav className="space-y-2">
+                <button
+                  onClick={() => {
+                    setActiveView('clientes');
+                    setMenuOpen(false);
+                  }}
+                  className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-all duration-200 ${
+                    activeView === 'clientes'
+                      ? 'bg-terracotta-50 text-terracotta-700 shadow-sm'
+                      : 'text-stone-700 hover:bg-stone-50'
+                  }`}
+                >
+                  <Users className="w-5 h-5" />
+                  <span>👥 Todos los clientes</span>
+                </button>
+
+                <button
+                  onClick={() => {
+                    setActiveView('cumpleanos');
+                    setMenuOpen(false);
+                  }}
+                  className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-all duration-200 ${
+                    activeView === 'cumpleanos'
+                      ? 'bg-terracotta-50 text-terracotta-700 shadow-sm'
+                      : 'text-stone-700 hover:bg-stone-50'
+                  }`}
+                >
+                  <Cake className="w-5 h-5" />
+                  <span>🎂 Cumpleaños</span>
+                  {clientesCumpleanosHoy.length > 0 && (
+                    <span className="ml-auto w-6 h-6 bg-red-500 text-white text-xs rounded-full flex items-center justify-center font-bold">
+                      {clientesCumpleanosHoy.length}
+                    </span>
+                  )}
+                </button>
+
+                <button
+                  onClick={() => {
+                    setActiveView('nuevos');
+                    setMenuOpen(false);
+                  }}
+                  className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-all duration-200 ${
+                    activeView === 'nuevos'
+                      ? 'bg-terracotta-50 text-terracotta-700 shadow-sm'
+                      : 'text-stone-700 hover:bg-stone-50'
+                  }`}
+                >
+                  <UserPlus className="w-5 h-5" />
+                  <span>🆕 Nuevos clientes</span>
+                </button>
+              </nav>
+            </div>
+          </div>
+        </>
+      )}
 
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
@@ -332,6 +414,23 @@ function App() {
             }>
               <BirthdayView clientes={clientesCumpleanosHoy} loading={loading} />
             </Suspense>
+          </div>
+        )}
+
+        {activeView === 'nuevos' && (
+          <div className="space-y-6">
+            <div className="flex items-center gap-3">
+              <UserPlus className="w-7 h-7 text-terracotta-600" />
+              <h2 className="text-2xl font-bold text-stone-900">Nuevos Clientes</h2>
+            </div>
+            <p className="text-stone-600">Clientes ordenados por fecha de última compra (más recientes primero)</p>
+            <div className="bg-white rounded-2xl shadow-sm p-8 border border-stone-200/60">
+              <ClientList
+                clientes={clientesNuevos}
+                loading={loading}
+                onSelectCliente={setSelectedCliente}
+              />
+            </div>
           </div>
         )}
       </main>

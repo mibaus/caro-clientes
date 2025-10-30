@@ -3,12 +3,11 @@ import { Cake, MapPin, MessageCircle, PartyPopper, Loader2 } from 'lucide-react'
 
 const BirthdayView = memo(({ clientes, loading }) => {
   const enviarMensajeWhatsApp = (cliente) => {
-    // Emojis usando códigos Unicode escapados
+    // Emojis usando códigos Unicode
     const sparkles = String.fromCodePoint(0x2728); // ✨
     const wine = String.fromCodePoint(0x1F377); // 🍷
     const sushi = String.fromCodePoint(0x1F363); // 🍣
     
-    // Construir mensaje con emojis correctos
     const mensaje = `${sparkles} ¡Feliz cumpleaños, ${cliente.nombre}!
 
 El equipo de Caro Righetti Cocina de Autor te desea un nuevo año lleno de sabores, emociones y momentos únicos.
@@ -25,14 +24,13 @@ Esta semana queremos agasajarte con una copa de bienvenida sin cargo y un benefi
       return;
     }
     
-    // Si no tiene código de país, agregar 549 (Argentina con 9 para celulares)
     if (telefono.length === 10 && !telefono.startsWith('549')) {
       telefono = '549' + telefono;
     } else if (telefono.length === 10 && !telefono.startsWith('54')) {
       telefono = '54' + telefono;
     }
     
-    // Usar encodeURIComponent para codificar correctamente los emojis en UTF-8
+    // Codificar mensaje para URL
     const url = `https://api.whatsapp.com/send?phone=${telefono}&text=${encodeURIComponent(mensaje)}`;
     window.open(url, '_blank');
   };
