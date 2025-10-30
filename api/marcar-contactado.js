@@ -40,19 +40,20 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: "clienteId es requerido" });
     }
 
-    console.log('🟢 [API] Llamando a Apps Script:', scriptUrl);
+    // Enviar token en query string (igual que ventas.js)
+    const url = `${scriptUrl}?action=marcarContactado&token=${token}`;
+    
+    console.log('🟢 [API] Llamando a Apps Script:', url);
     console.log('🟢 [API] Payload:', { 
       action: "marcarContactado",
-      token: token ? '[OCULTO]' : 'FALTANTE',
       clienteId 
     });
 
-    const response = await fetch(scriptUrl, {
+    const response = await fetch(url, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ 
         action: "marcarContactado",
-        token,
         clienteId
       })
     });
