@@ -3,14 +3,19 @@ import { Cake, MapPin, MessageCircle, PartyPopper, Loader2 } from 'lucide-react'
 
 const BirthdayView = memo(({ clientes, loading }) => {
   const enviarMensajeWhatsApp = (cliente) => {
-    // Mensaje sin emojis - WhatsApp Web API no los soporta bien por URL
-    const mensaje = `*¡Feliz cumpleaños, ${cliente.nombre}!*
+    // Emojis usando códigos Unicode escapados
+    const sparkles = String.fromCodePoint(0x2728); // ✨
+    const wine = String.fromCodePoint(0x1F377); // 🍷
+    const sushi = String.fromCodePoint(0x1F363); // 🍣
+    
+    // Construir mensaje con emojis correctos
+    const mensaje = `${sparkles} ¡Feliz cumpleaños, ${cliente.nombre}!
 
-El equipo de *Caro Righetti Cocina de Autor* te desea un nuevo año lleno de sabores, emociones y momentos únicos.
+El equipo de Caro Righetti Cocina de Autor te desea un nuevo año lleno de sabores, emociones y momentos únicos.
 
-Esta semana queremos agasajarte con una *copa de bienvenida sin cargo* y un beneficio especial para que disfrutes de una cena inolvidable.
+Esta semana queremos agasajarte con una copa de bienvenida sin cargo y un beneficio especial para que disfrutes de una cena inolvidable.
 
-*¡Te esperamos para celebrar juntos!*`;
+¡Te esperamos para celebrar juntos! ${wine}${sushi}`;
     
     // Convertir a string y eliminar caracteres no numéricos
     let telefono = String(cliente.telefono || '').replace(/\D/g, '');
@@ -27,7 +32,7 @@ Esta semana queremos agasajarte con una *copa de bienvenida sin cargo* y un bene
       telefono = '54' + telefono;
     }
     
-    // Usar encodeURIComponent que es el estándar para parámetros URL
+    // Usar encodeURIComponent para codificar correctamente los emojis en UTF-8
     const url = `https://api.whatsapp.com/send?phone=${telefono}&text=${encodeURIComponent(mensaje)}`;
     window.open(url, '_blank');
   };
