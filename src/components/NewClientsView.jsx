@@ -70,10 +70,14 @@ Equipo Caro Righetti`;
 
   const marcarComoContactado = async (clienteId) => {
     try {
+      console.log('🔵 [FRONTEND] Iniciando marcar contactado para clienteId:', clienteId);
+      
       // Ocultar inmediatamente (UI optimista)
       setClientesOcultosLocal(prev => [...prev, clienteId]);
       setProcesando(prev => [...prev, clienteId]);
 
+      console.log('🔵 [FRONTEND] Llamando a /api/marcar-contactado...');
+      
       // Llamar al API para marcar en Google Sheets
       const response = await fetch('/api/marcar-contactado', {
         method: 'POST',
@@ -81,9 +85,16 @@ Equipo Caro Righetti`;
         body: JSON.stringify({ clienteId })
       });
 
+      console.log('🔵 [FRONTEND] Respuesta recibida. Status:', response.status);
+
+      const data = await response.json();
+      console.log('🔵 [FRONTEND] Data de respuesta:', data);
+
       if (!response.ok) {
-        throw new Error('Error al marcar como contactado');
+        throw new Error(data.error || 'Error al marcar como contactado');
       }
+
+      console.log('✅ [FRONTEND] Cliente marcado exitosamente');
 
       // Notificar al componente padre para refrescar datos
       if (onClienteContactado) {
@@ -91,8 +102,8 @@ Equipo Caro Righetti`;
       }
 
     } catch (error) {
-      console.error('Error al marcar contactado:', error);
-      alert('No se pudo marcar el cliente como contactado. Intenta nuevamente.');
+      console.error('❌ [FRONTEND] Error al marcar contactado:', error);
+      alert('No se pudo marcar el cliente como contactado. Intenta nuevamente.\n\nError: ' + error.message);
       // Revertir el cambio optimista
       setClientesOcultosLocal(prev => prev.filter(id => id !== clienteId));
     } finally {
