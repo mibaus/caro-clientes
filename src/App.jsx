@@ -62,7 +62,8 @@ function App() {
         zona: cliente.zona || cliente.Zona || '',
         telefono: cliente.telefono || cliente.Celular || cliente['Celular 📱'] || '',
         fechaNacimiento: cliente.fechaNacimiento || cliente['Fecha de cumpleaños 🎂'] || cliente.fechaCumpleanos || '',
-        ultimaCompra: cliente.ultimaCompra || cliente['Última compra'] || cliente['Marca temporal'] || ''
+        ultimaCompra: cliente.ultimaCompra || cliente['Última compra'] || cliente['Marca temporal'] || '',
+        contactado: cliente.contactado || cliente.Contactado === 'Sí' || cliente.Contactado === 'SI' || false
       }));
       
       
@@ -277,6 +278,17 @@ function App() {
     );
   }, [showToast]);
 
+  const handleClienteContactado = useCallback((clienteID) => {
+    // Actualización optimista: marcar el cliente como contactado localmente
+    setClientes(prevClientes => 
+      prevClientes.map(c => 
+        c.id === clienteID 
+          ? { ...c, contactado: true }
+          : c
+      )
+    );
+  }, []);
+
   const handleLogin = () => {
     setIsAuthenticated(true);
   };
@@ -428,7 +440,11 @@ function App() {
                 <Loader2 className="w-8 h-8 text-terracotta-600 animate-spin" />
               </div>
             }>
-              <NewClientsView clientes={clientesNuevos} loading={loading} />
+              <NewClientsView 
+                clientes={clientesNuevos} 
+                loading={loading}
+                onClienteContactado={handleClienteContactado}
+              />
             </Suspense>
           </div>
         )}

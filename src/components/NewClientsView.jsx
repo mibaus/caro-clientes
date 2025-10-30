@@ -1,4 +1,4 @@
-import { memo, useState, useEffect } from 'react';
+import { memo, useState } from 'react';
 import { UserPlus, MessageCircle, CheckCircle, Clock, MapPin, Loader2 } from 'lucide-react';
 
 // Función para calcular días desde el registro
@@ -21,21 +21,14 @@ const formatearDiasRegistro = (dias) => {
   return `Hace +1 mes`;
 };
 
-const NewClientsView = memo(({ clientes, loading }) => {
-  // Estado para trackear clientes contactados (persiste en localStorage)
-  const [clientesContactados, setClientesContactados] = useState(() => {
-    const saved = localStorage.getItem('clientesContactados');
-    return saved ? JSON.parse(saved) : [];
-  });
+const NewClientsView = memo(({ clientes, loading, onClienteContactado }) => {
+  // Estado local para UI optimista (ocultar inmediatamente mientras se guarda)
+  const [clientesOcultosLocal, setClientesOcultosLocal] = useState([]);
+  const [procesando, setProcesando] = useState([]);
 
-  // Guardar en localStorage cuando cambie
-  useEffect(() => {
-    localStorage.setItem('clientesContactados', JSON.stringify(clientesContactados));
-  }, [clientesContactados]);
-
-  // Filtrar solo clientes NO contactados
+  // Filtrar clientes NO contactados (desde Google Sheets + ocultados localmente)
   const clientesPendientes = clientes.filter(
-    cliente => !clientesContactados.includes(cliente.id)
+    cliente => !cliente.contactado && !clientesOcultosLocal.includes(cliente.id)
   );
 
   const enviarMensajeWhatsApp = (cliente) => {
@@ -75,8 +68,36 @@ Equipo Caro Righetti`;
     window.open(url, '_blank');
   };
 
-  const marcarComoContactado = (clienteId) => {
-    setClientesContactados(prev => [...prev, clienteId]);
+  const marcarComoContactado = async (clienteId) => {
+    try {
+      // Ocultar inmediatamente (UI optimista)
+      setClientesOcultosLocal(prev => [...prev, clienteId]);
+      setProcesando(prev => [...prev, clienteId]);
+
+      // Llamar al API para marcar en Google Sheets
+      const response = await fetch('/api/marcar-contactado', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ clienteId })
+      });
+
+      if (!response.ok) {
+        throw new Error('Error al marcar como contactado');
+      }
+
+      // Notificar al componente padre para refrescar datos
+      if (onClienteContactado) {
+        onClienteContactado(clienteId);
+      }
+
+    } catch (error) {
+      console.error('Error al marcar contactado:', error);
+      alert('No se pudo marcar el cliente como contactado. Intenta nuevamente.');
+      // Revertir el cambio optimista
+      setClientesOcultosLocal(prev => prev.filter(id => id !== clienteId));
+    } finally {
+      setProcesando(prev => prev.filter(id => id !== clienteId));
+    }
   };
 
   if (loading) {
@@ -98,22 +119,19 @@ Equipo Caro Righetti`;
   }
 
   if (clientesPendientes.length === 0) {
+    const clientesContactados = clientes.filter(c => c.contactado);
     return (
       <div className="text-center py-16">
         <CheckCircle className="w-16 h-16 text-green-500 mx-auto mb-4" />
         <p className="text-stone-600 text-lg font-medium">¡Todos los clientes fueron contactados!</p>
         <p className="text-stone-400 text-sm mt-2">
-          {clientes.length} {clientes.length === 1 ? 'cliente contactado' : 'clientes contactados'}
+          {clientesContactados.length} {clientesContactados.length === 1 ? 'cliente contactado' : 'clientes contactados'}
         </p>
-        <button
-          onClick={() => setClientesContactados([])}
-          className="mt-4 px-4 py-2 text-sm text-terracotta-600 hover:text-terracotta-700 font-medium"
-        >
-          Restablecer lista
-        </button>
       </div>
     );
   }
+
+  const clientesContactados = clientes.filter(c => c.contactado);
 
   return (
     <div className="space-y-6">
@@ -193,10 +211,19 @@ Equipo Caro Righetti`;
                   
                   <button
                     onClick={() => marcarComoContactado(cliente.id)}
-                    className="px-4 py-3 bg-white hover:bg-stone-50 text-stone-700 font-medium rounded-xl border-2 border-stone-200 hover:border-stone-300 transition-all duration-300"
+                    disabled={procesando.includes(cliente.id)}
+                    className={`px-4 py-3 font-medium rounded-xl border-2 transition-all duration-300 ${
+                      procesando.includes(cliente.id)
+                        ? 'bg-stone-100 border-stone-200 text-stone-400 cursor-not-allowed'
+                        : 'bg-white hover:bg-stone-50 text-stone-700 border-stone-200 hover:border-stone-300'
+                    }`}
                     title="Marcar como contactado"
                   >
-                    <CheckCircle className="w-5 h-5" />
+                    {procesando.includes(cliente.id) ? (
+                      <Loader2 className="w-5 h-5 animate-spin" />
+                    ) : (
+                      <CheckCircle className="w-5 h-5" />
+                    )}
                   </button>
                 </div>
               </div>
