@@ -7,6 +7,7 @@ import Login from './components/Login';
 // Lazy loading para componentes pesados
 const ClientModal = lazy(() => import('./components/ClientModal'));
 const BirthdayView = lazy(() => import('./components/BirthdayView'));
+const NewClientsView = lazy(() => import('./components/NewClientsView'));
 const Toast = lazy(() => import('./components/Toast'));
 
 function App() {
@@ -92,8 +93,11 @@ function App() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Memoizar clientes nuevos (ordenados por última compra)
+  // Memoizar clientes nuevos (últimos 30 días o máximo 50)
   const clientesNuevos = useMemo(() => {
+    const hace30Dias = new Date();
+    hace30Dias.setDate(hace30Dias.getDate() - 30);
+    
     return [...clientes]
       .filter(c => c.ultimaCompra) // Solo clientes con compras registradas
       .sort((a, b) => {
@@ -101,7 +105,7 @@ function App() {
         const fechaB = new Date(b.ultimaCompra);
         return fechaB - fechaA; // Más recientes primero
       })
-      .slice(0, 20); // Mostrar los 20 más recientes
+      .slice(0, 50); // Mostrar hasta 50 más recientes
   }, [clientes]);
 
   // Memoizar cálculo de cumpleaños del día
@@ -418,19 +422,14 @@ function App() {
         )}
 
         {activeView === 'nuevos' && (
-          <div className="space-y-6">
-            <div className="flex items-center gap-3">
-              <UserPlus className="w-7 h-7 text-terracotta-600" />
-              <h2 className="text-2xl font-bold text-stone-900">Nuevos Clientes</h2>
-            </div>
-            <p className="text-stone-600">Clientes ordenados por fecha de última compra (más recientes primero)</p>
-            <div className="bg-white rounded-2xl shadow-sm p-8 border border-stone-200/60">
-              <ClientList
-                clientes={clientesNuevos}
-                loading={loading}
-                onSelectCliente={setSelectedCliente}
-              />
-            </div>
+          <div className="bg-white rounded-2xl shadow-sm p-8 border border-stone-200/60">
+            <Suspense fallback={
+              <div className="flex justify-center items-center py-16">
+                <Loader2 className="w-8 h-8 text-terracotta-600 animate-spin" />
+              </div>
+            }>
+              <NewClientsView clientes={clientesNuevos} loading={loading} />
+            </Suspense>
           </div>
         )}
       </main>
