@@ -10,18 +10,18 @@ export default {
         sans: ['Inter', 'Poppins', 'Nunito', 'system-ui', 'sans-serif'],
       },
       colors: {
-        // Paleta cálida principal
+        // Paleta rosa coral moderna
         terracotta: {
-          50: '#fdf8f6',
-          100: '#f9ede7',
-          200: '#f2d8cb',
-          300: '#e8bca3',
-          400: '#dc9871',
-          500: '#d17748',
-          600: '#c05a2e',
-          700: '#a14826',
-          800: '#843c23',
-          900: '#6c3421',
+          50: '#fff5f7',
+          100: '#ffe8ee',
+          200: '#ffd1dd',
+          300: '#ffaac4',
+          400: '#ff8aab',
+          500: '#ff6b9d',
+          600: '#e5578a',
+          700: '#cc4477',
+          800: '#b23364',
+          900: '#992752',
         },
         // Paleta lavanda/púrpura suave para acentos
         lavender: {
