@@ -33,6 +33,36 @@
   .shadow-soft-lg {
     box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.08), 0 2px 4px -2px rgb(0 0 0 / 0.08);
   }
+
+  /* Glassmorphism */
+  .glass {
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+  }
+
+  .glass-strong {
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+  }
+
+  /* Sombra con profundidad para glassmorphism */
+  .shadow-glass {
+    box-shadow: 
+      0 4px 6px -1px rgb(0 0 0 / 0.07),
+      0 2px 4px -2px rgb(0 0 0 / 0.05),
+      inset 0 1px 0 0 rgb(255 255 255 / 0.1);
+  }
+
+  .shadow-glass-lg {
+    box-shadow: 
+      0 10px 15px -3px rgb(0 0 0 / 0.08),
+      0 4px 6px -4px rgb(0 0 0 / 0.06),
+      inset 0 1px 0 0 rgb(255 255 255 / 0.15);
+  }
 }
 
 @keyframes slide-in {

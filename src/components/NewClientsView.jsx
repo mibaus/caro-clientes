@@ -148,10 +148,10 @@ Equipo Caro Righetti`;
           return (
             <div
               key={cliente.id}
-              className={`group relative bg-white rounded-2xl p-6 border-2 transition-all duration-200 hover:-translate-y-0.5 ${
+              className={`group relative glass shadow-glass hover:shadow-glass-lg rounded-2xl p-6 transition-all duration-300 hover:-translate-y-1 ${
                 esReciente
-                  ? 'border-green-500/20 hover:border-green-500/40 shadow-sm hover:shadow-md'
-                  : 'border-stone-200 hover:border-stone-300 shadow-sm hover:shadow-md'
+                  ? 'ring-2 ring-green-400/30 hover:ring-green-400/50'
+                  : ''
               }`}
             >
               <div className="space-y-5">
