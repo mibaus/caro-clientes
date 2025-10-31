@@ -148,6 +148,7 @@ Equipo Caro Righetti`;
 
                 {/* Badge de nuevo */}
                 {esReciente && (
+                  <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-green-100 text-green-700 text-xs font-semibold rounded-full">
                     <span className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></span>
                     Nuevo esta semana
                   </div>
@@ -168,7 +169,7 @@ Equipo Caro Righetti`;
             </div>
           );
         })}
-{{ ... }}
+      </div>
     </div>
   );
 });
