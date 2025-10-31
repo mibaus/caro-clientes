@@ -1,5 +1,5 @@
-import { memo, useState } from 'react';
-import { UserPlus, MessageCircle, CheckCircle, Clock, MapPin, Loader2 } from 'lucide-react';
+import { memo } from 'react';
+import { UserPlus, MessageCircle, Clock, MapPin, Loader2 } from 'lucide-react';
 
 // Función para calcular días desde el registro
 const calcularDiasDesdeRegistro = (fechaCompra) => {
@@ -21,15 +21,9 @@ const formatearDiasRegistro = (dias) => {
   return `Hace +1 mes`;
 };
 
-const NewClientsView = memo(({ clientes, loading, onClienteContactado }) => {
-  // Estado local para UI optimista (ocultar inmediatamente mientras se guarda)
-  const [clientesOcultosLocal, setClientesOcultosLocal] = useState([]);
-  const [procesando, setProcesando] = useState([]);
-
-  // Filtrar clientes NO contactados (desde Google Sheets + ocultados localmente)
-  const clientesPendientes = clientes.filter(
-    cliente => !cliente.contactado && !clientesOcultosLocal.includes(cliente.id)
-  );
+const NewClientsView = memo(({ clientes, loading }) => {
+  // Mostrar todos los clientes nuevos sin filtrar
+  const clientesPendientes = clientes;
 
   const enviarMensajeWhatsApp = (cliente) => {
     // Emojis usando códigos Unicode
@@ -68,79 +62,6 @@ Equipo Caro Righetti`;
     window.open(url, '_blank');
   };
 
-  const marcarComoContactado = async (clienteId) => {
-    console.log('═══════════════════════════════════════════════════');
-    console.log('🔵 [FRONTEND] INICIO - Marcar cliente como contactado');
-    console.log('🔵 [FRONTEND] ClienteId:', clienteId);
-    console.log('🔵 [FRONTEND] Timestamp:', new Date().toISOString());
-    console.log('═══════════════════════════════════════════════════');
-    
-    try {
-      // Ocultar inmediatamente (UI optimista)
-      setClientesOcultosLocal(prev => [...prev, clienteId]);
-      setProcesando(prev => [...prev, clienteId]);
-
-      console.log('🔵 [FRONTEND] Llamando a /api/marcar-contactado...');
-      
-      const requestBody = { clienteId };
-      console.log('🔵 [FRONTEND] Request body:', JSON.stringify(requestBody));
-      
-      // Llamar al API para marcar en Google Sheets
-      const response = await fetch('/api/marcar-contactado', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(requestBody)
-      });
-
-      console.log('🔵 [FRONTEND] Respuesta recibida');
-      console.log('🔵 [FRONTEND] Status:', response.status);
-      console.log('🔵 [FRONTEND] Status Text:', response.statusText);
-
-      const data = await response.json();
-      console.log('🔵 [FRONTEND] ═══ RESPUESTA COMPLETA ═══');
-      console.log('🔵 [FRONTEND] Data:', JSON.stringify(data, null, 2));
-      
-      if (data.version) {
-        console.log('🔵 [FRONTEND] ✅ Versión de Apps Script:', data.version);
-      }
-      
-      if (data.success) {
-        console.log('🔵 [FRONTEND] ✅ SUCCESS:', data.message);
-        console.log('🔵 [FRONTEND] ✅ Fila actualizada:', data.fila);
-      }
-      
-      if (data.error) {
-        console.error('🔵 [FRONTEND] ❌ ERROR:', data.error);
-      }
-
-      if (!response.ok) {
-        throw new Error(data.error || 'Error al marcar como contactado');
-      }
-
-      console.log('═══════════════════════════════════════════════════');
-      console.log('✅ [FRONTEND] ÉXITO - Cliente marcado correctamente');
-      console.log('═══════════════════════════════════════════════════');
-
-      // Notificar al componente padre para refrescar datos
-      if (onClienteContactado) {
-        onClienteContactado(clienteId);
-      }
-
-    } catch (error) {
-      console.log('═══════════════════════════════════════════════════');
-      console.error('❌ [FRONTEND] ERROR COMPLETO');
-      console.error('❌ [FRONTEND] Mensaje:', error.message);
-      console.error('❌ [FRONTEND] Stack:', error.stack);
-      console.log('═══════════════════════════════════════════════════');
-      
-      alert('No se pudo marcar el cliente como contactado.\n\nError: ' + error.message + '\n\nRevisá la consola del navegador (F12) para más detalles.');
-      
-      // Revertir el cambio optimista
-      setClientesOcultosLocal(prev => prev.filter(id => id !== clienteId));
-    } finally {
-      setProcesando(prev => prev.filter(id => id !== clienteId));
-    }
-  };
 
   if (loading) {
     return (
@@ -161,19 +82,14 @@ Equipo Caro Righetti`;
   }
 
   if (clientesPendientes.length === 0) {
-    const clientesContactados = clientes.filter(c => c.contactado);
     return (
       <div className="text-center py-16">
-        <CheckCircle className="w-16 h-16 text-green-500 mx-auto mb-4" />
-        <p className="text-stone-600 text-lg font-medium">¡Todos los clientes fueron contactados!</p>
-        <p className="text-stone-400 text-sm mt-2">
-          {clientesContactados.length} {clientesContactados.length === 1 ? 'cliente contactado' : 'clientes contactados'}
-        </p>
+        <UserPlus className="w-16 h-16 text-stone-300 mx-auto mb-4" />
+        <p className="text-stone-600 text-lg font-medium">No hay nuevos clientes</p>
+        <p className="text-stone-400 text-sm mt-2">Los nuevos registros aparecerán aquí</p>
       </div>
     );
   }
-
-  const clientesContactados = clientes.filter(c => c.contactado);
 
   return (
     <div className="space-y-6">
@@ -182,12 +98,10 @@ Equipo Caro Righetti`;
           <UserPlus className="w-8 h-8 text-terracotta-600" />
           <div>
             <h2 className="text-2xl font-bold text-stone-900">
-              {clientesPendientes.length} {clientesPendientes.length === 1 ? 'cliente pendiente' : 'clientes pendientes'}
+              {clientesPendientes.length} {clientesPendientes.length === 1 ? 'cliente nuevo' : 'clientes nuevos'}
             </h2>
             <p className="text-sm text-stone-500 mt-0.5">
-              {clientesContactados.length > 0 && (
-                <span>{clientesContactados.length} ya contactados</span>
-              )}
+              Clientes más recientes (últimos 50)
             </p>
           </div>
         </div>
@@ -234,45 +148,27 @@ Equipo Caro Righetti`;
 
                 {/* Badge de nuevo */}
                 {esReciente && (
-                  <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-green-100 text-green-700 text-xs font-semibold rounded-full">
                     <span className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></span>
                     Nuevo esta semana
                   </div>
                 )}
 
-                {/* Botones de acción */}
-                <div className="flex gap-2 pt-2">
+                {/* Botón de acción */}
+                <div className="pt-2">
                   <button
                     onClick={() => enviarMensajeWhatsApp(cliente)}
-                    className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-green-500 hover:bg-green-600 text-white font-medium rounded-xl shadow-md hover:shadow-lg transition-all duration-300"
+                    className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-green-500 hover:bg-green-600 text-white font-medium rounded-xl shadow-md hover:shadow-lg transition-all duration-300"
                     title="Enviar mensaje de bienvenida"
                   >
                     <MessageCircle className="w-4 h-4" />
                     Enviar WhatsApp
-                  </button>
-                  
-                  <button
-                    onClick={() => marcarComoContactado(cliente.id)}
-                    disabled={procesando.includes(cliente.id)}
-                    className={`px-4 py-3 font-medium rounded-xl border-2 transition-all duration-300 ${
-                      procesando.includes(cliente.id)
-                        ? 'bg-stone-100 border-stone-200 text-stone-400 cursor-not-allowed'
-                        : 'bg-white hover:bg-stone-50 text-stone-700 border-stone-200 hover:border-stone-300'
-                    }`}
-                    title="Marcar como contactado"
-                  >
-                    {procesando.includes(cliente.id) ? (
-                      <Loader2 className="w-5 h-5 animate-spin" />
-                    ) : (
-                      <CheckCircle className="w-5 h-5" />
-                    )}
                   </button>
                 </div>
               </div>
             </div>
           );
         })}
-      </div>
+{{ ... }}
     </div>
   );
 });
