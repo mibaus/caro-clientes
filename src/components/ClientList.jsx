@@ -4,7 +4,15 @@ import { User, MapPin, Loader2, Clock } from 'lucide-react';
 // Función para calcular días desde la última compra
 const calcularDiasDesdeCompra = (fechaCompra) => {
   if (!fechaCompra) return null;
+  
   const fecha = new Date(fechaCompra);
+  
+  // Validar si la fecha es válida
+  if (isNaN(fecha.getTime())) {
+    console.warn('Fecha inválida:', fechaCompra);
+    return null;
+  }
+  
   const hoy = new Date();
   const diferencia = Math.floor((hoy - fecha) / (1000 * 60 * 60 * 24));
   return diferencia;

@@ -104,6 +104,11 @@ function App() {
       .sort((a, b) => {
         const fechaA = new Date(a.ultimaCompra);
         const fechaB = new Date(b.ultimaCompra);
+        
+        // Validar fechas antes de comparar
+        if (isNaN(fechaA.getTime())) return 1;
+        if (isNaN(fechaB.getTime())) return -1;
+        
         return fechaB - fechaA; // Más recientes primero
       })
       .slice(0, 50); // Mostrar hasta 50 más recientes
@@ -149,10 +154,18 @@ function App() {
       } else if (fechaStr.includes('-')) {
         // Formato ISO: YYYY-MM-DD
         fechaNac = new Date(fechaStr);
+        if (isNaN(fechaNac.getTime())) {
+          console.warn(`   Fecha ISO inválida: ${fechaStr}`);
+          return false;
+        }
         console.log(`   Parseado ISO → ${fechaNac.getDate()}/${fechaNac.getMonth() + 1}/${fechaNac.getFullYear()}`);
       } else {
         // Intentar parsear como está
         fechaNac = new Date(fechaStr);
+        if (isNaN(fechaNac.getTime())) {
+          console.warn(`   Fecha genérica inválida: ${fechaStr}`);
+          return false;
+        }
         console.log(`   Parseado genérico → ${fechaNac}`);
       }
       
@@ -200,13 +213,22 @@ function App() {
       if (ultimaCompra) {
         if (cliente.ultimaCompra) {
           const fechaUltimaCompra = new Date(cliente.ultimaCompra);
+          
+          // Validar fecha antes de calcular
+          if (isNaN(fechaUltimaCompra.getTime())) {
+            console.warn(`   Fecha de última compra inválida: ${cliente.ultimaCompra}`);
+            return false;
+          }
+          
           const hoy = new Date();
           const diferenciaDias = Math.floor((hoy - fechaUltimaCompra) / (1000 * 60 * 60 * 24));
           if (diferenciaDias < parseInt(ultimaCompra)) {
             return false;
           }
+        } else {
+          console.log(`   No tiene fecha de última compra`);
+          return false;
         }
-        // Si no tiene fecha de compra, incluirlo de todas formas
       }
       
       // 3. Filtro por término de búsqueda

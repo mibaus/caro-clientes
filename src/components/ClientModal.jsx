@@ -33,7 +33,15 @@ const ClientModal = memo(({ cliente, onClose, onVentaRegistrada }) => {
 
   const formatFecha = (fecha) => {
     if (!fecha) return 'N/A';
+    
     const date = new Date(fecha);
+    
+    // Validar si la fecha es válida
+    if (isNaN(date.getTime())) {
+      console.warn('Fecha inválida:', fecha);
+      return 'N/A';
+    }
+    
     return date.toLocaleDateString('es-AR', { day: '2-digit', month: '2-digit', year: 'numeric' });
   };
 
