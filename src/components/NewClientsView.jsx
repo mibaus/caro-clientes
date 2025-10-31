@@ -26,8 +26,22 @@ const NewClientsView = memo(({ clientes, loading, onClienteContactado }) => {
 
   // Filtrar solo clientes NO contactados
   const clientesPendientes = clientes.filter(c => {
-    const contactado = String(c.contactado || '').toLowerCase();
-    return contactado !== 'sí' && contactado !== 'si' && contactado !== 'yes' && contactado !== 'true';
+    const contactado = String(c.contactado || '').toLowerCase().trim();
+    
+    // DEBUG: Mostrar primeros 3 clientes
+    const index = clientes.indexOf(c);
+    if (index < 3) {
+      console.log(`🔍 [NewClientsView] Cliente ${index}:`, {
+        id: c.id,
+        nombre: c.nombre,
+        contactadoRaw: c.contactado,
+        contactadoLower: contactado,
+        seFiltra: contactado !== 'sí' && contactado !== 'si' && contactado !== 'yes' && contactado !== 'true' && contactado !== ''
+      });
+    }
+    
+    // Filtrar si está contactado (cualquier valor que indique "sí")
+    return contactado === '' || (contactado !== 'sí' && contactado !== 'si' && contactado !== 'yes' && contactado !== 'true' && contactado !== 's' && contactado !== 'y');
   });
 
   const marcarComoContactado = async (cliente) => {

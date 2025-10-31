@@ -54,17 +54,36 @@ function App() {
         clientesData = data.data;
       }
       
+      // DEBUG: Ver un cliente raw
+      if (clientesData.length > 0) {
+        console.log('🔍 [DEBUG] Primer cliente RAW:', clientesData[0]);
+        console.log('🔍 [DEBUG] Keys del cliente:', Object.keys(clientesData[0]));
+      }
+      
       // Normalizar campos del API (mapear nombres de Google Sheets a nombres esperados)
-      clientesData = clientesData.map((cliente, index) => ({
-        id: cliente.ID || cliente.id || cliente.ClienteID || cliente.clienteID || cliente['ID Cliente'] || String(index + 1),
-        nombre: cliente.nombre || cliente.Nombre || '',
-        apellido: cliente.apellido || cliente.Apellido || '',
-        zona: cliente.zona || cliente.Zona || '',
-        telefono: cliente.telefono || cliente.Celular || cliente['Celular 📱'] || '',
-        fechaNacimiento: cliente.fechaNacimiento || cliente['Fecha de cumpleaños 🎂'] || cliente.fechaCumpleanos || '',
-        ultimaCompra: cliente.ultimaCompra || cliente['Última compra'] || cliente['Marca temporal'] || '',
-        contactado: cliente.Contactado || cliente.contactado || ''
-      }));
+      clientesData = clientesData.map((cliente, index) => {
+        const normalizado = {
+          id: cliente.ID || cliente.id || cliente.ClienteID || cliente.clienteID || cliente['ID Cliente'] || String(index + 1),
+          nombre: cliente.nombre || cliente.Nombre || '',
+          apellido: cliente.apellido || cliente.Apellido || '',
+          zona: cliente.zona || cliente.Zona || '',
+          telefono: cliente.telefono || cliente.Celular || cliente['Celular 📱'] || '',
+          fechaNacimiento: cliente.fechaNacimiento || cliente['Fecha de cumpleaños 🎂'] || cliente.fechaCumpleanos || '',
+          ultimaCompra: cliente.ultimaCompra || cliente['Última compra'] || cliente['Marca temporal'] || '',
+          contactado: cliente.Contactado || cliente.contactado || ''
+        };
+        
+        // DEBUG: Mostrar campo contactado
+        if (index < 3) {
+          console.log(`🔍 [DEBUG] Cliente ${index}:`, {
+            nombre: normalizado.nombre,
+            contactadoRaw: cliente.Contactado,
+            contactadoNormalizado: normalizado.contactado
+          });
+        }
+        
+        return normalizado;
+      });
       
       
       if (clientesData.length > 0) {
