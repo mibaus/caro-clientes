@@ -309,29 +309,29 @@ function App() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-stone-50 via-amber-50/30 to-orange-50/20">
+    <div className="min-h-screen bg-stone-50">
       {/* Header */}
-      <header className="bg-white/80 backdrop-blur-xl border-b border-stone-200/60 shadow-luxury sticky top-0 z-40">
+      <header className="bg-white border-b border-stone-200 sticky top-0 z-40">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-20 py-4">
+          <div className="flex items-center justify-between h-16">
             {/* Logo/Título */}
-            <div className="flex items-center gap-4">
-              <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-terracotta-500 to-terracotta-600 shadow-lg flex items-center justify-center">
-                <Users className="w-6 h-6 text-white" />
+            <div className="flex items-center gap-3">
+              <div className="w-9 h-9 rounded-xl bg-terracotta-600 flex items-center justify-center">
+                <Users className="w-5 h-5 text-white" />
               </div>
-              <h1 className="text-2xl font-display font-bold text-stone-900 tracking-tight">Gestión de Clientes</h1>
+              <h1 className="text-lg font-semibold text-stone-900">Gestión de Clientes</h1>
             </div>
             
             {/* Menú Hamburguesa */}
             <button
               onClick={() => setMenuOpen(!menuOpen)}
-              className="p-3 rounded-xl hover:bg-stone-100 transition-all duration-300 hover:scale-105"
+              className="p-2 rounded-lg hover:bg-stone-100 transition-colors"
               aria-label="Menú"
             >
               {menuOpen ? (
-                <X className="w-6 h-6 text-stone-700" />
+                <X className="w-5 h-5 text-stone-700" />
               ) : (
-                <Menu className="w-6 h-6 text-stone-700" />
+                <Menu className="w-5 h-5 text-stone-700" />
               )}
             </button>
           </div>
@@ -348,33 +348,33 @@ function App() {
           />
           
           {/* Drawer */}
-          <div className="fixed top-0 right-0 h-full w-80 bg-gradient-to-b from-white to-stone-50 shadow-luxury-lg z-50 animate-slide-in">
-            <div className="p-8">
+          <div className="fixed top-0 right-0 h-full w-72 bg-white border-l border-stone-200 z-50 animate-slide-in">
+            <div className="p-6">
               {/* Header del menú */}
-              <div className="flex items-center justify-between mb-10">
-                <h2 className="text-2xl font-display font-bold text-stone-900">Menú</h2>
+              <div className="flex items-center justify-between mb-8">
+                <h2 className="text-lg font-semibold text-stone-900">Menú</h2>
                 <button
                   onClick={() => setMenuOpen(false)}
-                  className="p-2.5 rounded-xl hover:bg-stone-200/50 transition-all duration-300"
+                  className="p-2 rounded-lg hover:bg-stone-100 transition-colors"
                 >
-                  <X className="w-6 h-6 text-stone-700" />
+                  <X className="w-5 h-5 text-stone-700" />
                 </button>
               </div>
 
               {/* Opciones del menú */}
-              <nav className="space-y-3">
+              <nav className="space-y-2">
                 <button
                   onClick={() => {
                     setActiveView('clientes');
                     setMenuOpen(false);
                   }}
-                  className={`w-full flex items-center gap-4 px-5 py-4 rounded-2xl font-semibold transition-all duration-300 ${
+                  className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl font-medium text-sm transition-colors ${
                     activeView === 'clientes'
-                      ? 'bg-gradient-to-r from-terracotta-500 to-terracotta-600 text-white shadow-luxury'
-                      : 'text-stone-700 hover:bg-stone-100 hover:scale-105'
+                      ? 'bg-terracotta-600 text-white'
+                      : 'text-stone-700 hover:bg-stone-100'
                   }`}
                 >
-                  <Users className="w-5 h-5" />
+                  <Users className="w-4 h-4" />
                   <span>Todos los clientes</span>
                 </button>
 
@@ -383,16 +383,16 @@ function App() {
                     setActiveView('cumpleanos');
                     setMenuOpen(false);
                   }}
-                  className={`w-full flex items-center gap-4 px-5 py-4 rounded-2xl font-semibold transition-all duration-300 relative ${
+                  className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl font-medium text-sm transition-colors ${
                     activeView === 'cumpleanos'
-                      ? 'bg-gradient-to-r from-terracotta-500 to-terracotta-600 text-white shadow-luxury'
-                      : 'text-stone-700 hover:bg-stone-100 hover:scale-105'
+                      ? 'bg-terracotta-600 text-white'
+                      : 'text-stone-700 hover:bg-stone-100'
                   }`}
                 >
-                  <Cake className="w-5 h-5" />
+                  <Cake className="w-4 h-4" />
                   <span>Cumpleaños</span>
                   {clientesCumpleanosHoy.length > 0 && (
-                    <span className="ml-auto w-7 h-7 bg-red-500 text-white text-xs rounded-full flex items-center justify-center font-bold shadow-lg">
+                    <span className="ml-auto w-5 h-5 bg-red-500 text-white text-xs rounded-full flex items-center justify-center font-semibold">
                       {clientesCumpleanosHoy.length}
                     </span>
                   )}
@@ -403,13 +403,13 @@ function App() {
                     setActiveView('nuevos');
                     setMenuOpen(false);
                   }}
-                  className={`w-full flex items-center gap-4 px-5 py-4 rounded-2xl font-semibold transition-all duration-300 ${
+                  className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl font-medium text-sm transition-colors ${
                     activeView === 'nuevos'
-                      ? 'bg-gradient-to-r from-terracotta-500 to-terracotta-600 text-white shadow-luxury'
-                      : 'text-stone-700 hover:bg-stone-100 hover:scale-105'
+                      ? 'bg-terracotta-600 text-white'
+                      : 'text-stone-700 hover:bg-stone-100'
                   }`}
                 >
-                  <UserPlus className="w-5 h-5" />
+                  <UserPlus className="w-4 h-4" />
                   <span>Nuevos clientes</span>
                 </button>
               </nav>
@@ -419,11 +419,11 @@ function App() {
       )}
 
       {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {activeView === 'clientes' && (
-          <div className="space-y-8 animate-fade-in">
+          <div className="space-y-6">
             <SearchBar onSearch={handleSearch} zonas={zonas} />
-            <div className="bg-white/90 backdrop-blur-sm rounded-3xl shadow-luxury p-10 border border-stone-200/40">
+            <div className="bg-white rounded-2xl shadow-sm p-8 border border-stone-200">
               <ClientList
                 clientes={clientesFiltrados}
                 loading={loading}
@@ -434,10 +434,10 @@ function App() {
         )}
 
         {activeView === 'cumpleanos' && (
-          <div className="bg-white/90 backdrop-blur-sm rounded-3xl shadow-luxury p-10 border border-stone-200/40 animate-fade-in">
+          <div className="bg-white rounded-2xl shadow-sm p-8 border border-stone-200">
             <Suspense fallback={
               <div className="flex justify-center items-center py-20">
-                <Loader2 className="w-10 h-10 text-terracotta-600 animate-spin" />
+                <Loader2 className="w-8 h-8 text-terracotta-600 animate-spin" />
               </div>
             }>
               <BirthdayView clientes={clientesCumpleanosHoy} loading={loading} />
@@ -446,10 +446,10 @@ function App() {
         )}
 
         {activeView === 'nuevos' && (
-          <div className="bg-white/90 backdrop-blur-sm rounded-3xl shadow-luxury p-10 border border-stone-200/40 animate-fade-in">
+          <div className="bg-white rounded-2xl shadow-sm p-8 border border-stone-200">
             <Suspense fallback={
               <div className="flex justify-center items-center py-20">
-                <Loader2 className="w-10 h-10 text-terracotta-600 animate-spin" />
+                <Loader2 className="w-8 h-8 text-terracotta-600 animate-spin" />
               </div>
             }>
               <NewClientsView 

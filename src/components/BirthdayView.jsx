@@ -1,5 +1,5 @@
 import { memo } from 'react';
-import { Cake, MapPin, MessageCircle, PartyPopper, Loader2, Sparkles } from 'lucide-react';
+import { Cake, MapPin, MessageCircle, Loader2 } from 'lucide-react';
 
 const BirthdayView = memo(({ clientes, loading }) => {
   const enviarMensajeWhatsApp = (cliente) => {
@@ -37,73 +37,65 @@ Esta semana queremos agasajarte con una copa de bienvenida sin cargo y un benefi
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center py-24">
-        <Loader2 className="w-10 h-10 text-terracotta-600 animate-spin" />
+      <div className="flex justify-center items-center py-32">
+        <Loader2 className="w-8 h-8 text-terracotta-600 animate-spin" />
       </div>
     );
   }
 
   if (!clientes || clientes.length === 0) {
     return (
-      <div className="text-center py-20 px-4">
-        <div className="w-20 h-20 rounded-3xl bg-gradient-to-br from-pink-50 to-rose-100 flex items-center justify-center mx-auto mb-6 shadow-luxury">
-          <Cake className="w-10 h-10 text-rose-400" />
+      <div className="text-center py-24 px-4">
+        <div className="inline-flex w-16 h-16 items-center justify-center rounded-2xl bg-pink-100 mb-5">
+          <Cake className="w-8 h-8 text-pink-600" />
         </div>
-        <h3 className="text-stone-700 text-xl font-semibold mb-2">No hay cumpleaños hoy</h3>
-        <p className="text-stone-500 text-sm max-w-sm mx-auto">Vuelve mañana para celebrar con tus clientes</p>
+        <h3 className="text-stone-900 text-lg font-semibold mb-2">Sin cumpleaños hoy</h3>
+        <p className="text-stone-500 text-sm">Vuelve mañana para ver quién celebra</p>
       </div>
     );
   }
 
   return (
-    <div className="space-y-8 animate-fade-in">
-      <div className="flex items-center gap-4">
-        <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-pink-500 to-rose-600 shadow-luxury flex items-center justify-center">
-          <PartyPopper className="w-7 h-7 text-white" />
-        </div>
-        <div>
-          <h2 className="text-3xl font-display font-bold text-stone-900 tracking-tight">
-            {clientes.length === 1 ? '¡Cumpleaños Hoy!' : `${clientes.length} Cumpleaños Hoy`}
-          </h2>
-          <p className="text-sm text-stone-500 mt-1 font-medium">
-            Clientes cumpliendo años • ¡Tiempo de celebrar!
-          </p>
-        </div>
+    <div className="space-y-8">
+      <div>
+        <h1 className="text-2xl font-bold text-stone-900 mb-1 tracking-tight">
+          Cumpleaños de Hoy
+        </h1>
+        <p className="text-stone-600 text-sm">
+          {clientes.length} {clientes.length === 1 ? 'cliente cumple años' : 'clientes cumplen años'}
+        </p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
         {clientes.map((cliente) => (
           <div
             key={cliente.id}
-            className="group relative bg-gradient-to-br from-pink-50/90 via-rose-50/90 to-orange-50/90 rounded-3xl p-6 border-2 border-rose-100 shadow-luxury hover:shadow-luxury-lg transition-all duration-500"
+            className="group bg-white rounded-2xl p-6 border-2 border-pink-500/20 hover:border-pink-500/40 shadow-sm hover:shadow-md transition-all duration-200 hover:-translate-y-0.5"
           >
             <div className="flex items-start justify-between gap-4">
-              <div className="flex items-start gap-4 flex-1">
-                <div className="relative">
-                  <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-pink-500 to-rose-600 flex items-center justify-center flex-shrink-0 shadow-lg transition-all duration-300 group-hover:scale-110">
-                    <Cake className="w-6 h-6 text-white" />
-                  </div>
-                  <div className="absolute -top-1 -right-1 w-4 h-4 bg-yellow-400 rounded-full border-2 border-white animate-pulse">
-                    <Sparkles className="w-2.5 h-2.5 text-white absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2" />
-                  </div>
+              <div className="flex items-start gap-3 flex-1 min-w-0">
+                <div className="flex-shrink-0 w-12 h-12 rounded-xl bg-pink-100 flex items-center justify-center">
+                  <Cake className="w-5 h-5 text-pink-600" />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <h3 className="font-display font-bold text-stone-900 text-xl leading-tight mb-2 group-hover:text-rose-700 transition-colors">
+                  <h3 className="text-lg font-semibold text-stone-900 mb-2 leading-tight">
                     {cliente.nombre} {cliente.apellido}
                   </h3>
-                  <div className="flex items-center gap-2 text-sm text-stone-600">
-                    <MapPin className="w-4 h-4 flex-shrink-0 text-stone-400" />
-                    <span className="font-medium">{cliente.zona || 'Sin zona'}</span>
-                  </div>
+                  {cliente.zona && (
+                    <div className="flex items-center gap-1.5 text-sm text-stone-600">
+                      <MapPin className="w-3.5 h-3.5 flex-shrink-0" />
+                      <span>{cliente.zona}</span>
+                    </div>
+                  )}
                 </div>
               </div>
 
               <button
                 onClick={() => enviarMensajeWhatsApp(cliente)}
-                className="group/btn flex-shrink-0 w-14 h-14 rounded-2xl bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 flex items-center justify-center text-white shadow-luxury hover:shadow-luxury-lg transition-all duration-300 transform hover:scale-110"
-                title="Enviar mensaje de cumpleaños"
+                className="flex-shrink-0 w-11 h-11 rounded-xl bg-green-600 hover:bg-green-700 flex items-center justify-center text-white transition-colors duration-150"
+                title="Enviar felicitación"
               >
-                <MessageCircle className="w-6 h-6 group-hover/btn:rotate-12 transition-transform" />
+                <MessageCircle className="w-5 h-5" />
               </button>
             </div>
           </div>

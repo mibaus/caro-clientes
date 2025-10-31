@@ -1,5 +1,5 @@
 import { memo, useState } from 'react';
-import { UserPlus, MessageCircle, Clock, MapPin, Loader2, CheckCircle, Sparkles } from 'lucide-react';
+import { UserPlus, MessageCircle, Clock, MapPin, Loader2, CheckCircle2 } from 'lucide-react';
 
 // Función para calcular días desde el registro
 const calcularDiasDesdeRegistro = (fechaCompra) => {
@@ -99,55 +99,48 @@ Equipo Caro Righetti`;
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center py-24">
-        <Loader2 className="w-10 h-10 text-terracotta-600 animate-spin" />
+      <div className="flex justify-center items-center py-32">
+        <Loader2 className="w-8 h-8 text-terracotta-600 animate-spin" />
       </div>
     );
   }
 
   if (!clientes || clientes.length === 0) {
     return (
-      <div className="text-center py-20 px-4">
-        <div className="w-20 h-20 rounded-3xl bg-gradient-to-br from-stone-100 to-stone-200 flex items-center justify-center mx-auto mb-6 shadow-luxury">
-          <UserPlus className="w-10 h-10 text-stone-400" />
+      <div className="text-center py-24 px-4">
+        <div className="inline-flex w-16 h-16 items-center justify-center rounded-2xl bg-stone-100 mb-5">
+          <UserPlus className="w-8 h-8 text-stone-400" />
         </div>
-        <h3 className="text-stone-700 text-xl font-semibold mb-2">No hay nuevos clientes</h3>
-        <p className="text-stone-500 text-sm max-w-sm mx-auto">Los nuevos registros aparecerán aquí automáticamente</p>
+        <h3 className="text-stone-900 text-lg font-semibold mb-2">Sin clientes nuevos</h3>
+        <p className="text-stone-500 text-sm">Los registros aparecerán aquí</p>
       </div>
     );
   }
 
   if (clientesPendientes.length === 0) {
     return (
-      <div className="text-center py-20 px-4">
-        <div className="w-20 h-20 rounded-3xl bg-gradient-to-br from-green-50 to-emerald-100 flex items-center justify-center mx-auto mb-6 shadow-luxury">
-          <CheckCircle className="w-10 h-10 text-green-600" />
+      <div className="text-center py-24 px-4">
+        <div className="inline-flex w-16 h-16 items-center justify-center rounded-2xl bg-green-100 mb-5">
+          <CheckCircle2 className="w-8 h-8 text-green-600" />
         </div>
-        <h3 className="text-stone-700 text-xl font-semibold mb-2">¡Todo al día!</h3>
-        <p className="text-stone-500 text-sm max-w-sm mx-auto">Ya contactaste a todos los clientes nuevos</p>
+        <h3 className="text-stone-900 text-lg font-semibold mb-2">¡Todo listo!</h3>
+        <p className="text-stone-500 text-sm">Todos los clientes fueron contactados</p>
       </div>
     );
   }
 
   return (
-    <div className="space-y-8 animate-fade-in">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-4">
-          <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-terracotta-500 to-terracotta-600 shadow-luxury flex items-center justify-center">
-            <Sparkles className="w-7 h-7 text-white" />
-          </div>
-          <div>
-            <h2 className="text-3xl font-display font-bold text-stone-900 tracking-tight">
-              {clientesPendientes.length} {clientesPendientes.length === 1 ? 'Cliente Nuevo' : 'Clientes Nuevos'}
-            </h2>
-            <p className="text-sm text-stone-500 mt-1 font-medium">
-              Últimos 50 registros • Pendientes de contacto
-            </p>
-          </div>
-        </div>
+    <div className="space-y-8">
+      <div>
+        <h1 className="text-2xl font-bold text-stone-900 mb-1 tracking-tight">
+          Nuevos Clientes
+        </h1>
+        <p className="text-stone-600 text-sm">
+          {clientesPendientes.length} {clientesPendientes.length === 1 ? 'cliente pendiente' : 'clientes pendientes'} de contactar
+        </p>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
         {clientesPendientes.map((cliente) => {
           const diasRegistro = calcularDiasDesdeRegistro(cliente.ultimaCompra);
           const esReciente = diasRegistro !== null && diasRegistro <= 7;
@@ -155,82 +148,74 @@ Equipo Caro Righetti`;
           return (
             <div
               key={cliente.id}
-              className={`group relative rounded-3xl p-6 shadow-luxury hover:shadow-luxury-lg transition-all duration-500 backdrop-blur-sm ${
+              className={`group relative bg-white rounded-2xl p-6 border-2 transition-all duration-200 hover:-translate-y-0.5 ${
                 esReciente
-                  ? 'bg-gradient-to-br from-green-50/90 via-emerald-50/90 to-teal-50/90 border-2 border-green-100'
-                  : 'bg-gradient-to-br from-white/90 via-stone-50/90 to-amber-50/90 border-2 border-stone-100'
+                  ? 'border-green-500/20 hover:border-green-500/40 shadow-sm hover:shadow-md'
+                  : 'border-stone-200 hover:border-stone-300 shadow-sm hover:shadow-md'
               }`}
             >
               <div className="space-y-5">
                 {/* Header con info del cliente */}
-                <div className="flex items-start gap-4">
-                  <div className="relative">
-                    <div className={`w-14 h-14 rounded-2xl flex items-center justify-center flex-shrink-0 shadow-lg transition-all duration-300 group-hover:scale-110 ${
-                      esReciente 
-                        ? 'bg-gradient-to-br from-green-400 to-emerald-500' 
-                        : 'bg-gradient-to-br from-terracotta-500 to-terracotta-600'
+                <div className="flex items-start justify-between gap-4">
+                  <div className="flex items-start gap-3 flex-1 min-w-0">
+                    <div className={`flex-shrink-0 w-12 h-12 rounded-xl flex items-center justify-center ${
+                      esReciente ? 'bg-green-100' : 'bg-stone-100'
                     }`}>
-                      <UserPlus className="w-6 h-6 text-white" />
+                      <UserPlus className={`w-5 h-5 ${
+                        esReciente ? 'text-green-600' : 'text-stone-600'
+                      }`} />
                     </div>
-                    {esReciente && (
-                      <div className="absolute -top-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-white animate-pulse" />
-                    )}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <h3 className="font-display font-bold text-stone-900 text-xl leading-tight mb-2 group-hover:text-terracotta-700 transition-colors">
-                      {cliente.nombre} {cliente.apellido}
-                    </h3>
-                    <div className="space-y-1.5">
-                      {cliente.zona && (
-                        <div className="flex items-center gap-2 text-sm text-stone-600">
-                          <MapPin className="w-4 h-4 flex-shrink-0 text-stone-400" />
-                          <span className="font-medium">{cliente.zona}</span>
+                    <div className="flex-1 min-w-0">
+                      <h3 className="text-lg font-semibold text-stone-900 mb-2 leading-tight">
+                        {cliente.nombre} {cliente.apellido}
+                      </h3>
+                      <div className="space-y-1">
+                        {cliente.zona && (
+                          <div className="flex items-center gap-1.5 text-sm text-stone-600">
+                            <MapPin className="w-3.5 h-3.5 flex-shrink-0" />
+                            <span>{cliente.zona}</span>
+                          </div>
+                        )}
+                        <div className="flex items-center gap-1.5 text-sm text-stone-500">
+                          <Clock className="w-3.5 h-3.5 flex-shrink-0" />
+                          <span>{formatearDiasRegistro(diasRegistro)}</span>
                         </div>
-                      )}
-                      <div className={`flex items-center gap-2 text-sm font-semibold ${
-                        esReciente ? 'text-green-700' : 'text-stone-600'
-                      }`}>
-                        <Clock className="w-4 h-4 flex-shrink-0" />
-                        <span>Registrado {formatearDiasRegistro(diasRegistro)}</span>
                       </div>
                     </div>
                   </div>
+                  {esReciente && (
+                    <span className="inline-flex items-center px-2.5 py-1 rounded-lg bg-green-100 text-green-700 text-xs font-semibold">
+                      Nuevo
+                    </span>
+                  )}
                 </div>
 
-                {/* Badge de nuevo */}
-                {esReciente && (
-                  <div className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-green-500 to-emerald-500 text-white text-xs font-bold rounded-full shadow-md">
-                    <Sparkles className="w-3.5 h-3.5 animate-pulse" />
-                    Nuevo esta semana
-                  </div>
-                )}
-
                 {/* Botones de acción */}
-                <div className="pt-3 space-y-3">
+                <div className="flex gap-3">
                   <button
                     onClick={() => enviarMensajeWhatsApp(cliente)}
-                    className="w-full group/btn flex items-center justify-center gap-3 px-5 py-4 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-semibold rounded-2xl shadow-luxury hover:shadow-luxury-lg transition-all duration-300 transform hover:scale-[1.02]"
-                    title="Enviar mensaje de bienvenida"
+                    className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-green-600 hover:bg-green-700 text-white font-medium text-sm rounded-xl transition-colors duration-150"
+                    title="Enviar WhatsApp"
                   >
-                    <MessageCircle className="w-5 h-5 group-hover/btn:rotate-12 transition-transform" />
-                    <span>Enviar WhatsApp</span>
+                    <MessageCircle className="w-4 h-4" />
+                    <span>WhatsApp</span>
                   </button>
 
                   <button
                     onClick={() => marcarComoContactado(cliente)}
                     disabled={loadingContactados[cliente.id]}
-                    className="w-full group/btn flex items-center justify-center gap-3 px-5 py-4 bg-gradient-to-r from-terracotta-500 to-terracotta-600 hover:from-terracotta-600 hover:to-terracotta-700 disabled:from-stone-300 disabled:to-stone-400 disabled:cursor-not-allowed text-white font-semibold rounded-2xl shadow-luxury hover:shadow-luxury-lg transition-all duration-300 transform hover:scale-[1.02] disabled:transform-none"
+                    className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-terracotta-600 hover:bg-terracotta-700 disabled:bg-stone-300 disabled:cursor-not-allowed text-white font-medium text-sm rounded-xl transition-colors duration-150"
                     title="Marcar como contactado"
                   >
                     {loadingContactados[cliente.id] ? (
                       <>
-                        <Loader2 className="w-5 h-5 animate-spin" />
-                        <span>Marcando...</span>
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                        <span>Marcando</span>
                       </>
                     ) : (
                       <>
-                        <CheckCircle className="w-5 h-5 group-hover/btn:scale-110 transition-transform" />
-                        <span>Marcar como Contactado</span>
+                        <CheckCircle2 className="w-4 h-4" />
+                        <span>Contactado</span>
                       </>
                     )}
                   </button>
