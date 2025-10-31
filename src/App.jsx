@@ -168,33 +168,61 @@ function App() {
       console.log(`\n🔍 Procesando: ${cliente.nombre} - "${fechaStr}"`);
       
       // Parsear diferentes formatos de fecha
-      if (fechaStr.includes('/')) {
-        // Formato DD/MM/YYYY o MM/DD/YYYY
-        const partes = fechaStr.split('/');
-        if (partes.length === 3) {
-          // Asumimos DD/MM/YYYY (formato común en Latinoamérica)
-          const dia = parseInt(partes[0], 10);
-          const mes = parseInt(partes[1], 10) - 1; // Mes 0-11
-          const anio = parseInt(partes[2], 10);
-          fechaNac = new Date(anio, mes, dia);
-          console.log(`   Parseado DD/MM/YYYY → día: ${dia}, mes: ${mes + 1}, año: ${anio}`);
+      try {
+        if (fechaStr.includes('/')) {
+          // Formato DD/MM/YYYY o MM/DD/YYYY
+          const partes = fechaStr.split('/');
+          if (partes.length === 3) {
+            // Asumimos DD/MM/YYYY (formato común en Latinoamérica)
+            const dia = parseInt(partes[0], 10);
+            const mes = parseInt(partes[1], 10) - 1; // Mes 0-11
+            const anio = parseInt(partes[2], 10);
+            
+            // Validar que los valores sean números válidos
+            if (isNaN(dia) || isNaN(mes) || isNaN(anio)) {
+              console.warn(`   Valores no numéricos: día=${partes[0]}, mes=${partes[1]}, año=${partes[2]}`);
+              return false;
+            }
+            
+            // Validar rangos básicos
+            if (dia < 1 || dia > 31 || mes < 0 || mes > 11 || anio < 1900 || anio > 2100) {
+              console.warn(`   Valores fuera de rango: día=${dia}, mes=${mes + 1}, año=${anio}`);
+              return false;
+            }
+            
+            fechaNac = new Date(anio, mes, dia);
+            
+            // Verificar que la fecha resultante sea válida
+            if (isNaN(fechaNac.getTime())) {
+              console.warn(`   Fecha DD/MM/YYYY inválida después de crear: ${fechaStr}`);
+              return false;
+            }
+            
+            console.log(`   Parseado DD/MM/YYYY → día: ${dia}, mes: ${mes + 1}, año: ${anio}`);
+          } else {
+            console.warn(`   Formato DD/MM/YYYY con partes incorrectas: ${partes.length}`);
+            return false;
+          }
+        } else if (fechaStr.includes('-')) {
+          // Formato ISO: YYYY-MM-DD
+          fechaNac = new Date(fechaStr);
+          if (isNaN(fechaNac.getTime())) {
+            console.warn(`   Fecha ISO inválida: ${fechaStr}`);
+            return false;
+          }
+          console.log(`   Parseado ISO → ${fechaNac.getDate()}/${fechaNac.getMonth() + 1}/${fechaNac.getFullYear()}`);
+        } else {
+          // Intentar parsear como está
+          fechaNac = new Date(fechaStr);
+          if (isNaN(fechaNac.getTime())) {
+            console.warn(`   Fecha genérica inválida: ${fechaStr}`);
+            return false;
+          }
+          console.log(`   Parseado genérico → ${fechaNac}`);
         }
-      } else if (fechaStr.includes('-')) {
-        // Formato ISO: YYYY-MM-DD
-        fechaNac = new Date(fechaStr);
-        if (isNaN(fechaNac.getTime())) {
-          console.warn(`   Fecha ISO inválida: ${fechaStr}`);
-          return false;
-        }
-        console.log(`   Parseado ISO → ${fechaNac.getDate()}/${fechaNac.getMonth() + 1}/${fechaNac.getFullYear()}`);
-      } else {
-        // Intentar parsear como está
-        fechaNac = new Date(fechaStr);
-        if (isNaN(fechaNac.getTime())) {
-          console.warn(`   Fecha genérica inválida: ${fechaStr}`);
-          return false;
-        }
-        console.log(`   Parseado genérico → ${fechaNac}`);
+      } catch (error) {
+        console.error(`   Error parseando fecha "${fechaStr}":`, error.message);
+        return false;
       }
       
       // Validar que la fecha sea válida
