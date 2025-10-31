@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Lock, Eye, EyeOff, Loader2, AlertCircle } from 'lucide-react';
 
 const Login = ({ onLogin }) => {
@@ -82,7 +82,7 @@ const Login = ({ onLogin }) => {
   };
 
   // Cargar intentos previos
-  useState(() => {
+  useEffect(() => {
     const savedAttempts = localStorage.getItem('loginAttempts');
     if (savedAttempts) {
       setAttempts(parseInt(savedAttempts, 10));

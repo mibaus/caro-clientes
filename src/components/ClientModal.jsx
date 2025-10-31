@@ -1,4 +1,4 @@
-import { useState, memo } from 'react';
+import { useState, memo, useCallback, useMemo } from 'react';
 import { X, ShoppingCart, Eye, User, MapPin, Phone, Calendar, MessageCircle } from 'lucide-react';
 
 const ClientModal = memo(({ cliente, onClose, onVentaRegistrada }) => {
@@ -6,7 +6,7 @@ const ClientModal = memo(({ cliente, onClose, onVentaRegistrada }) => {
 
   if (!cliente) return null;
 
-  const handleRegistrarVenta = () => {
+  const handleRegistrarVenta = useCallback(() => {
     // Optimistic update: cerrar inmediatamente y actualizar UI
     onVentaRegistrada(cliente.id);
     onClose();
@@ -29,23 +29,22 @@ const ClientModal = memo(({ cliente, onClose, onVentaRegistrada }) => {
       console.error('Error al registrar venta:', error);
       // El error se registra pero no interrumpe la experiencia del usuario
     });
-  };
+  }, [cliente.id, onVentaRegistrada, onClose]);
 
-  const formatFecha = (fecha) => {
+  const formatFecha = useCallback((fecha) => {
     if (!fecha) return 'N/A';
     
     const date = new Date(fecha);
     
     // Validar si la fecha es válida
     if (isNaN(date.getTime())) {
-      console.warn('Fecha inválida:', fecha);
       return 'N/A';
     }
     
     return date.toLocaleDateString('es-AR', { day: '2-digit', month: '2-digit', year: 'numeric' });
-  };
+  }, []);
 
-  const abrirWhatsApp = () => {
+  const abrirWhatsApp = useCallback(() => {
     // Convertir a string y eliminar caracteres no numéricos
     let telefono = String(cliente.telefono || '').replace(/\D/g, '');
     
@@ -62,7 +61,7 @@ const ClientModal = memo(({ cliente, onClose, onVentaRegistrada }) => {
     }
     
     window.open(`https://wa.me/${telefono}`, '_blank');
-  };
+  }, [cliente.telefono]);
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 overflow-y-auto">
