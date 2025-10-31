@@ -1,5 +1,5 @@
 import { memo, useState } from 'react';
-import { UserPlus, MessageCircle, Clock, MapPin, Loader2, CheckCircle } from 'lucide-react';
+import { UserPlus, MessageCircle, Clock, MapPin, Loader2, CheckCircle, Sparkles } from 'lucide-react';
 
 // Función para calcular días desde el registro
 const calcularDiasDesdeRegistro = (fechaCompra) => {
@@ -27,19 +27,6 @@ const NewClientsView = memo(({ clientes, loading, onClienteContactado }) => {
   // Filtrar solo clientes NO contactados
   const clientesPendientes = clientes.filter(c => {
     const contactado = String(c.contactado || '').toLowerCase().trim();
-    
-    // DEBUG: Mostrar primeros 3 clientes
-    const index = clientes.indexOf(c);
-    if (index < 3) {
-      console.log(`🔍 [NewClientsView] Cliente ${index}:`, {
-        id: c.id,
-        nombre: c.nombre,
-        contactadoRaw: c.contactado,
-        contactadoLower: contactado,
-        seFiltra: contactado !== 'sí' && contactado !== 'si' && contactado !== 'yes' && contactado !== 'true' && contactado !== ''
-      });
-    }
-    
     // Filtrar si está contactado (cualquier valor que indique "sí")
     return contactado === '' || (contactado !== 'sí' && contactado !== 'si' && contactado !== 'yes' && contactado !== 'true' && contactado !== 's' && contactado !== 'y');
   });
@@ -112,49 +99,55 @@ Equipo Caro Righetti`;
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center py-16">
-        <Loader2 className="w-8 h-8 text-terracotta-600 animate-spin" />
+      <div className="flex justify-center items-center py-24">
+        <Loader2 className="w-10 h-10 text-terracotta-600 animate-spin" />
       </div>
     );
   }
 
   if (!clientes || clientes.length === 0) {
     return (
-      <div className="text-center py-16">
-        <UserPlus className="w-16 h-16 text-stone-300 mx-auto mb-4" />
-        <p className="text-stone-600 text-lg font-medium">No hay nuevos clientes</p>
-        <p className="text-stone-400 text-sm mt-2">Los nuevos registros aparecerán aquí</p>
+      <div className="text-center py-20 px-4">
+        <div className="w-20 h-20 rounded-3xl bg-gradient-to-br from-stone-100 to-stone-200 flex items-center justify-center mx-auto mb-6 shadow-luxury">
+          <UserPlus className="w-10 h-10 text-stone-400" />
+        </div>
+        <h3 className="text-stone-700 text-xl font-semibold mb-2">No hay nuevos clientes</h3>
+        <p className="text-stone-500 text-sm max-w-sm mx-auto">Los nuevos registros aparecerán aquí automáticamente</p>
       </div>
     );
   }
 
   if (clientesPendientes.length === 0) {
     return (
-      <div className="text-center py-16">
-        <UserPlus className="w-16 h-16 text-stone-300 mx-auto mb-4" />
-        <p className="text-stone-600 text-lg font-medium">No hay nuevos clientes</p>
-        <p className="text-stone-400 text-sm mt-2">Los nuevos registros aparecerán aquí</p>
+      <div className="text-center py-20 px-4">
+        <div className="w-20 h-20 rounded-3xl bg-gradient-to-br from-green-50 to-emerald-100 flex items-center justify-center mx-auto mb-6 shadow-luxury">
+          <CheckCircle className="w-10 h-10 text-green-600" />
+        </div>
+        <h3 className="text-stone-700 text-xl font-semibold mb-2">¡Todo al día!</h3>
+        <p className="text-stone-500 text-sm max-w-sm mx-auto">Ya contactaste a todos los clientes nuevos</p>
       </div>
     );
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8 animate-fade-in">
       <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <UserPlus className="w-8 h-8 text-terracotta-600" />
+        <div className="flex items-center gap-4">
+          <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-terracotta-500 to-terracotta-600 shadow-luxury flex items-center justify-center">
+            <Sparkles className="w-7 h-7 text-white" />
+          </div>
           <div>
-            <h2 className="text-2xl font-bold text-stone-900">
-              {clientesPendientes.length} {clientesPendientes.length === 1 ? 'cliente nuevo' : 'clientes nuevos'}
+            <h2 className="text-3xl font-display font-bold text-stone-900 tracking-tight">
+              {clientesPendientes.length} {clientesPendientes.length === 1 ? 'Cliente Nuevo' : 'Clientes Nuevos'}
             </h2>
-            <p className="text-sm text-stone-500 mt-0.5">
-              Clientes más recientes (últimos 50)
+            <p className="text-sm text-stone-500 mt-1 font-medium">
+              Últimos 50 registros • Pendientes de contacto
             </p>
           </div>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {clientesPendientes.map((cliente) => {
           const diasRegistro = calcularDiasDesdeRegistro(cliente.ultimaCompra);
           const esReciente = diasRegistro !== null && diasRegistro <= 7;
@@ -162,31 +155,42 @@ Equipo Caro Righetti`;
           return (
             <div
               key={cliente.id}
-              className={`bg-gradient-to-br rounded-2xl p-6 border shadow-sm hover:shadow-lg transition-all duration-300 ${
+              className={`group relative rounded-3xl p-6 shadow-luxury hover:shadow-luxury-lg transition-all duration-500 backdrop-blur-sm ${
                 esReciente
-                  ? 'from-green-50/80 to-emerald-50/80 border-green-200/70'
-                  : 'from-amber-50/80 to-orange-50/80 border-terracotta-200/70'
+                  ? 'bg-gradient-to-br from-green-50/90 via-emerald-50/90 to-teal-50/90 border-2 border-green-100'
+                  : 'bg-gradient-to-br from-white/90 via-stone-50/90 to-amber-50/90 border-2 border-stone-100'
               }`}
             >
-              <div className="space-y-4">
+              <div className="space-y-5">
                 {/* Header con info del cliente */}
                 <div className="flex items-start gap-4">
-                  <div className="w-11 h-11 rounded-xl bg-white flex items-center justify-center flex-shrink-0 shadow-sm">
-                    <UserPlus className="w-5 h-5 text-terracotta-700/70" />
+                  <div className="relative">
+                    <div className={`w-14 h-14 rounded-2xl flex items-center justify-center flex-shrink-0 shadow-lg transition-all duration-300 group-hover:scale-110 ${
+                      esReciente 
+                        ? 'bg-gradient-to-br from-green-400 to-emerald-500' 
+                        : 'bg-gradient-to-br from-terracotta-500 to-terracotta-600'
+                    }`}>
+                      <UserPlus className="w-6 h-6 text-white" />
+                    </div>
+                    {esReciente && (
+                      <div className="absolute -top-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-white animate-pulse" />
+                    )}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <h3 className="font-bold text-stone-900 text-lg leading-tight mb-1">
+                    <h3 className="font-display font-bold text-stone-900 text-xl leading-tight mb-2 group-hover:text-terracotta-700 transition-colors">
                       {cliente.nombre} {cliente.apellido}
                     </h3>
-                    <div className="space-y-1">
+                    <div className="space-y-1.5">
                       {cliente.zona && (
-                        <div className="flex items-center gap-1.5 text-sm text-stone-500">
-                          <MapPin className="w-3.5 h-3.5 flex-shrink-0" />
-                          <span>{cliente.zona}</span>
+                        <div className="flex items-center gap-2 text-sm text-stone-600">
+                          <MapPin className="w-4 h-4 flex-shrink-0 text-stone-400" />
+                          <span className="font-medium">{cliente.zona}</span>
                         </div>
                       )}
-                      <div className="flex items-center gap-1.5 text-sm font-medium text-green-600">
-                        <Clock className="w-3.5 h-3.5 flex-shrink-0" />
+                      <div className={`flex items-center gap-2 text-sm font-semibold ${
+                        esReciente ? 'text-green-700' : 'text-stone-600'
+                      }`}>
+                        <Clock className="w-4 h-4 flex-shrink-0" />
                         <span>Registrado {formatearDiasRegistro(diasRegistro)}</span>
                       </div>
                     </div>
@@ -195,35 +199,40 @@ Equipo Caro Righetti`;
 
                 {/* Badge de nuevo */}
                 {esReciente && (
-                  <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-green-100 text-green-700 text-xs font-semibold rounded-full">
-                    <span className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></span>
+                  <div className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-green-500 to-emerald-500 text-white text-xs font-bold rounded-full shadow-md">
+                    <Sparkles className="w-3.5 h-3.5 animate-pulse" />
                     Nuevo esta semana
                   </div>
                 )}
 
                 {/* Botones de acción */}
-                <div className="pt-2 space-y-2">
+                <div className="pt-3 space-y-3">
                   <button
                     onClick={() => enviarMensajeWhatsApp(cliente)}
-                    className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-green-500 hover:bg-green-600 text-white font-medium rounded-xl shadow-md hover:shadow-lg transition-all duration-300"
+                    className="w-full group/btn flex items-center justify-center gap-3 px-5 py-4 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-semibold rounded-2xl shadow-luxury hover:shadow-luxury-lg transition-all duration-300 transform hover:scale-[1.02]"
                     title="Enviar mensaje de bienvenida"
                   >
-                    <MessageCircle className="w-4 h-4" />
-                    Enviar WhatsApp
+                    <MessageCircle className="w-5 h-5 group-hover/btn:rotate-12 transition-transform" />
+                    <span>Enviar WhatsApp</span>
                   </button>
 
                   <button
                     onClick={() => marcarComoContactado(cliente)}
                     disabled={loadingContactados[cliente.id]}
-                    className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-terracotta-500 hover:bg-terracotta-600 disabled:bg-stone-300 disabled:cursor-not-allowed text-white font-medium rounded-xl shadow-md hover:shadow-lg transition-all duration-300"
+                    className="w-full group/btn flex items-center justify-center gap-3 px-5 py-4 bg-gradient-to-r from-terracotta-500 to-terracotta-600 hover:from-terracotta-600 hover:to-terracotta-700 disabled:from-stone-300 disabled:to-stone-400 disabled:cursor-not-allowed text-white font-semibold rounded-2xl shadow-luxury hover:shadow-luxury-lg transition-all duration-300 transform hover:scale-[1.02] disabled:transform-none"
                     title="Marcar como contactado"
                   >
                     {loadingContactados[cliente.id] ? (
-                      <Loader2 className="w-4 h-4 animate-spin" />
+                      <>
+                        <Loader2 className="w-5 h-5 animate-spin" />
+                        <span>Marcando...</span>
+                      </>
                     ) : (
-                      <CheckCircle className="w-4 h-4" />
+                      <>
+                        <CheckCircle className="w-5 h-5 group-hover/btn:scale-110 transition-transform" />
+                        <span>Marcar como Contactado</span>
+                      </>
                     )}
-                    {loadingContactados[cliente.id] ? 'Marcando...' : 'Marcar como Contactado'}
                   </button>
                 </div>
               </div>

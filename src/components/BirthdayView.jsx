@@ -1,5 +1,5 @@
 import { memo } from 'react';
-import { Cake, MapPin, MessageCircle, PartyPopper, Loader2 } from 'lucide-react';
+import { Cake, MapPin, MessageCircle, PartyPopper, Loader2, Sparkles } from 'lucide-react';
 
 const BirthdayView = memo(({ clientes, loading }) => {
   const enviarMensajeWhatsApp = (cliente) => {
@@ -37,59 +37,73 @@ Esta semana queremos agasajarte con una copa de bienvenida sin cargo y un benefi
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center py-16">
-        <Loader2 className="w-8 h-8 text-terracotta-600 animate-spin" />
+      <div className="flex justify-center items-center py-24">
+        <Loader2 className="w-10 h-10 text-terracotta-600 animate-spin" />
       </div>
     );
   }
 
   if (!clientes || clientes.length === 0) {
     return (
-      <div className="text-center py-16">
-        <Cake className="w-16 h-16 text-stone-300 mx-auto mb-4" />
-        <p className="text-stone-600 text-lg font-medium">No hay cumpleaños hoy</p>
-        <p className="text-stone-400 text-sm mt-2">Vuelve mañana para ver si alguien cumple años</p>
+      <div className="text-center py-20 px-4">
+        <div className="w-20 h-20 rounded-3xl bg-gradient-to-br from-pink-50 to-rose-100 flex items-center justify-center mx-auto mb-6 shadow-luxury">
+          <Cake className="w-10 h-10 text-rose-400" />
+        </div>
+        <h3 className="text-stone-700 text-xl font-semibold mb-2">No hay cumpleaños hoy</h3>
+        <p className="text-stone-500 text-sm max-w-sm mx-auto">Vuelve mañana para celebrar con tus clientes</p>
       </div>
     );
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center gap-3 mb-2">
-        <PartyPopper className="w-8 h-8 text-terracotta-600" />
-        <h2 className="text-2xl font-bold text-stone-900">
-          {clientes.length === 1 ? '1 cumpleaños hoy' : `${clientes.length} cumpleaños hoy`}
-        </h2>
+    <div className="space-y-8 animate-fade-in">
+      <div className="flex items-center gap-4">
+        <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-pink-500 to-rose-600 shadow-luxury flex items-center justify-center">
+          <PartyPopper className="w-7 h-7 text-white" />
+        </div>
+        <div>
+          <h2 className="text-3xl font-display font-bold text-stone-900 tracking-tight">
+            {clientes.length === 1 ? '¡Cumpleaños Hoy!' : `${clientes.length} Cumpleaños Hoy`}
+          </h2>
+          <p className="text-sm text-stone-500 mt-1 font-medium">
+            Clientes cumpliendo años • ¡Tiempo de celebrar!
+          </p>
+        </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {clientes.map((cliente) => (
           <div
             key={cliente.id}
-            className="bg-gradient-to-br from-amber-50/80 to-orange-50/80 rounded-2xl p-6 border border-terracotta-200/70 shadow-sm hover:shadow-lg transition-all duration-300"
+            className="group relative bg-gradient-to-br from-pink-50/90 via-rose-50/90 to-orange-50/90 rounded-3xl p-6 border-2 border-rose-100 shadow-luxury hover:shadow-luxury-lg transition-all duration-500"
           >
             <div className="flex items-start justify-between gap-4">
               <div className="flex items-start gap-4 flex-1">
-                <div className="w-11 h-11 rounded-xl bg-white flex items-center justify-center flex-shrink-0 shadow-sm">
-                  <Cake className="w-5 h-5 text-terracotta-700/70" />
+                <div className="relative">
+                  <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-pink-500 to-rose-600 flex items-center justify-center flex-shrink-0 shadow-lg transition-all duration-300 group-hover:scale-110">
+                    <Cake className="w-6 h-6 text-white" />
+                  </div>
+                  <div className="absolute -top-1 -right-1 w-4 h-4 bg-yellow-400 rounded-full border-2 border-white animate-pulse">
+                    <Sparkles className="w-2.5 h-2.5 text-white absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2" />
+                  </div>
                 </div>
                 <div className="flex-1 min-w-0">
-                  <h3 className="font-bold text-stone-900 text-lg leading-tight mb-1.5">
+                  <h3 className="font-display font-bold text-stone-900 text-xl leading-tight mb-2 group-hover:text-rose-700 transition-colors">
                     {cliente.nombre} {cliente.apellido}
                   </h3>
-                  <div className="flex items-center gap-1.5 text-sm text-stone-500">
-                    <MapPin className="w-3.5 h-3.5 flex-shrink-0" />
-                    <span>{cliente.zona || 'Sin zona'}</span>
+                  <div className="flex items-center gap-2 text-sm text-stone-600">
+                    <MapPin className="w-4 h-4 flex-shrink-0 text-stone-400" />
+                    <span className="font-medium">{cliente.zona || 'Sin zona'}</span>
                   </div>
                 </div>
               </div>
 
               <button
                 onClick={() => enviarMensajeWhatsApp(cliente)}
-                className="flex-shrink-0 w-12 h-12 rounded-xl bg-green-500 hover:bg-green-600 flex items-center justify-center text-white shadow-md hover:shadow-lg transition-all duration-300"
-                title="Enviar mensaje de WhatsApp"
+                className="group/btn flex-shrink-0 w-14 h-14 rounded-2xl bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 flex items-center justify-center text-white shadow-luxury hover:shadow-luxury-lg transition-all duration-300 transform hover:scale-110"
+                title="Enviar mensaje de cumpleaños"
               >
-                <MessageCircle className="w-5 h-5" />
+                <MessageCircle className="w-6 h-6 group-hover/btn:rotate-12 transition-transform" />
               </button>
             </div>
           </div>
