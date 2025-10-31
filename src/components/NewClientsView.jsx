@@ -1,5 +1,5 @@
-import { memo } from 'react';
-import { UserPlus, MessageCircle, Clock, MapPin, Loader2 } from 'lucide-react';
+import { memo, useState } from 'react';
+import { UserPlus, MessageCircle, Clock, MapPin, Loader2, CheckCircle } from 'lucide-react';
 
 // Función para calcular días desde el registro
 const calcularDiasDesdeRegistro = (fechaCompra) => {
@@ -21,9 +21,42 @@ const formatearDiasRegistro = (dias) => {
   return `Hace +1 mes`;
 };
 
-const NewClientsView = memo(({ clientes, loading }) => {
-  // Mostrar todos los clientes nuevos sin filtrar
-  const clientesPendientes = clientes;
+const NewClientsView = memo(({ clientes, loading, onClienteContactado }) => {
+  const [loadingContactados, setLoadingContactados] = useState({});
+
+  // Filtrar solo clientes NO contactados
+  const clientesPendientes = clientes.filter(c => {
+    const contactado = String(c.contactado || '').toLowerCase();
+    return contactado !== 'sí' && contactado !== 'si' && contactado !== 'yes' && contactado !== 'true';
+  });
+
+  const marcarComoContactado = async (cliente) => {
+    setLoadingContactados(prev => ({ ...prev, [cliente.id]: true }));
+
+    try {
+      const response = await fetch('/api/contactados', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ clienteId: cliente.id })
+      });
+
+      const result = await response.json();
+
+      if (response.ok && result.success) {
+        // Notificar al componente padre que se marcó el cliente
+        if (onClienteContactado) {
+          onClienteContactado(cliente.id);
+        }
+      } else {
+        alert(result.error || 'Error al marcar cliente como contactado');
+      }
+    } catch (error) {
+      console.error('Error al marcar contactado:', error);
+      alert('Error de conexión al marcar cliente');
+    } finally {
+      setLoadingContactados(prev => ({ ...prev, [cliente.id]: false }));
+    }
+  };
 
   const enviarMensajeWhatsApp = (cliente) => {
     // Emojis usando códigos Unicode
@@ -154,8 +187,8 @@ Equipo Caro Righetti`;
                   </div>
                 )}
 
-                {/* Botón de acción */}
-                <div className="pt-2">
+                {/* Botones de acción */}
+                <div className="pt-2 space-y-2">
                   <button
                     onClick={() => enviarMensajeWhatsApp(cliente)}
                     className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-green-500 hover:bg-green-600 text-white font-medium rounded-xl shadow-md hover:shadow-lg transition-all duration-300"
@@ -163,6 +196,20 @@ Equipo Caro Righetti`;
                   >
                     <MessageCircle className="w-4 h-4" />
                     Enviar WhatsApp
+                  </button>
+
+                  <button
+                    onClick={() => marcarComoContactado(cliente)}
+                    disabled={loadingContactados[cliente.id]}
+                    className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-terracotta-500 hover:bg-terracotta-600 disabled:bg-stone-300 disabled:cursor-not-allowed text-white font-medium rounded-xl shadow-md hover:shadow-lg transition-all duration-300"
+                    title="Marcar como contactado"
+                  >
+                    {loadingContactados[cliente.id] ? (
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                    ) : (
+                      <CheckCircle className="w-4 h-4" />
+                    )}
+                    {loadingContactados[cliente.id] ? 'Marcando...' : 'Marcar como Contactado'}
                   </button>
                 </div>
               </div>
