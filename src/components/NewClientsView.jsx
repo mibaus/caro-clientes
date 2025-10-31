@@ -194,28 +194,28 @@ Equipo Caro Righetti`;
                 <div className="flex gap-3">
                   <button
                     onClick={() => enviarMensajeWhatsApp(cliente)}
-                    className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-green-600 hover:bg-green-700 text-white font-medium text-sm rounded-xl transition-colors duration-150"
+                    className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-green-600 hover:bg-green-700 text-white font-medium text-sm rounded-xl transition-colors duration-150 whitespace-nowrap"
                     title="Enviar WhatsApp"
                   >
-                    <MessageCircle className="w-4 h-4" />
+                    <MessageCircle className="w-4 h-4 flex-shrink-0" />
                     <span>WhatsApp</span>
                   </button>
 
                   <button
                     onClick={() => marcarComoContactado(cliente)}
                     disabled={loadingContactados[cliente.id]}
-                    className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-terracotta-600 hover:bg-terracotta-700 disabled:bg-stone-300 disabled:cursor-not-allowed text-white font-medium text-sm rounded-xl transition-colors duration-150"
+                    className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-terracotta-600 hover:bg-terracotta-700 disabled:bg-stone-300 disabled:cursor-not-allowed text-white font-medium text-sm rounded-xl transition-colors duration-150 whitespace-nowrap min-w-0"
                     title="Marcar como contactado"
                   >
                     {loadingContactados[cliente.id] ? (
                       <>
-                        <Loader2 className="w-4 h-4 animate-spin" />
-                        <span>Marcando</span>
+                        <Loader2 className="w-4 h-4 flex-shrink-0 animate-spin" />
+                        <span className="truncate">Marcando</span>
                       </>
                     ) : (
                       <>
-                        <CheckCircle2 className="w-4 h-4" />
-                        <span>Contactado</span>
+                        <CheckCircle2 className="w-4 h-4 flex-shrink-0" />
+                        <span className="truncate">Contactado</span>
                       </>
                     )}
                   </button>
