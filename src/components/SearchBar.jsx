@@ -1,10 +1,22 @@
-import { useState, useEffect, memo } from 'react';
+import { useState, useEffect, memo, useMemo } from 'react';
 import { Search, MapPin, Clock } from 'lucide-react';
 
 const SearchBar = memo(({ onSearch, zonas = [] }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedZona, setSelectedZona] = useState('');
   const [selectedUltimaCompra, setSelectedUltimaCompra] = useState('');
+
+  // Memoizar las opciones de filtros para evitar re-renders innecesarios
+  const zonasOrdenadas = useMemo(() => {
+    return [...zonas].sort();
+  }, [zonas]);
+
+  const opcionesUltimaCompra = useMemo(() => [
+    { value: '', label: 'Todas' },
+    { value: '30', label: '+30 días' },
+    { value: '60', label: '+60 días' },
+    { value: '90', label: '+90 días' }
+  ], []);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -38,7 +50,7 @@ const SearchBar = memo(({ onSearch, zonas = [] }) => {
             className="w-full pl-12 pr-4 py-3.5 rounded-xl border border-stone-200 focus:outline-none focus:ring-2 focus:ring-terracotta-400 focus:border-transparent transition-all duration-200 appearance-none bg-white cursor-pointer text-stone-900"
           >
             <option value="">Todas las zonas</option>
-            {zonas.map((zona) => (
+            {zonasOrdenadas.map((zona) => (
               <option key={zona} value={zona}>
                 {zona}
               </option>
@@ -54,10 +66,11 @@ const SearchBar = memo(({ onSearch, zonas = [] }) => {
             onChange={(e) => setSelectedUltimaCompra(e.target.value)}
             className="w-full pl-12 pr-4 py-3.5 rounded-xl border border-stone-200 focus:outline-none focus:ring-2 focus:ring-terracotta-400 focus:border-transparent transition-all duration-200 appearance-none bg-white cursor-pointer text-stone-900"
           >
-            <option value="">Todas</option>
-            <option value="30">+30 días</option>
-            <option value="60">+60 días</option>
-            <option value="90">+90 días</option>
+            {opcionesUltimaCompra.map((opcion) => (
+              <option key={opcion.value} value={opcion.value}>
+                {opcion.label}
+              </option>
+            ))}
           </select>
         </div>
       </div>

@@ -1,4 +1,4 @@
-import { memo, useState } from 'react';
+import { memo, useState, useMemo } from 'react';
 import { UserPlus, MessageCircle, Clock, MapPin, Loader2, CheckCircle2 } from 'lucide-react';
 
 // Función para calcular días desde el registro
@@ -32,12 +32,14 @@ const formatearDiasRegistro = (dias) => {
 const NewClientsView = memo(({ clientes, loading, onClienteContactado }) => {
   const [loadingContactados, setLoadingContactados] = useState({});
 
-  // Filtrar solo clientes NO contactados
-  const clientesPendientes = clientes.filter(c => {
-    const contactado = String(c.contactado || '').toLowerCase().trim();
-    // Filtrar si está contactado (cualquier valor que indique "sí")
-    return contactado === '' || (contactado !== 'sí' && contactado !== 'si' && contactado !== 'yes' && contactado !== 'true' && contactado !== 's' && contactado !== 'y');
-  });
+  // Filtrar solo clientes NO contactados (memoizado para evitar recalcular)
+  const clientesPendientes = useMemo(() => {
+    return clientes.filter(c => {
+      const contactado = String(c.contactado || '').toLowerCase().trim();
+      // Filtrar si está contactado (cualquier valor que indique "sí")
+      return contactado === '' || (contactado !== 'sí' && contactado !== 'si' && contactado !== 'yes' && contactado !== 'true' && contactado !== 's' && contactado !== 'y');
+    });
+  }, [clientes]);
 
   const marcarComoContactado = async (cliente) => {
     setLoadingContactados(prev => ({ ...prev, [cliente.id]: true }));
@@ -150,7 +152,9 @@ Equipo Caro Righetti`;
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
         {clientesPendientes.map((cliente) => {
+          // Calcular una sola vez por cliente
           const diasRegistro = calcularDiasDesdeRegistro(cliente.ultimaCompra);
+          const textoRegistro = formatearDiasRegistro(diasRegistro);
           const esReciente = diasRegistro !== null && diasRegistro <= 7;
 
           return (
@@ -186,7 +190,7 @@ Equipo Caro Righetti`;
                         )}
                         <div className="flex items-center gap-1.5 text-sm text-stone-500">
                           <Clock className="w-3.5 h-3.5 flex-shrink-0" />
-                          <span>{formatearDiasRegistro(diasRegistro)}</span>
+                          <span>{textoRegistro}</span>
                         </div>
                       </div>
                     </div>

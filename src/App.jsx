@@ -63,8 +63,6 @@ function App() {
           const testDate = new Date(ultimaCompraRaw);
           if (!isNaN(testDate.getTime())) {
             ultimaCompraValidada = ultimaCompraRaw;
-          } else {
-            console.warn(`ultimaCompra inválida ignorada para cliente ${index}:`, ultimaCompraRaw);
           }
         }
         
@@ -77,8 +75,6 @@ function App() {
           const esFechaValida = !isNaN(testDate.getTime()) || /^\d{1,2}\/\d{1,2}\/\d{4}$/.test(fechaNacimientoRaw);
           if (esFechaValida) {
             fechaNacimientoValidada = fechaNacimientoRaw;
-          } else {
-            console.warn(`fechaNacimiento inválida ignorada para cliente ${index}:`, fechaNacimientoRaw);
           }
         }
         
@@ -118,9 +114,10 @@ function App() {
 
   // Cargar todos los clientes al inicio
   useEffect(() => {
-    fetchClientes();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    if (isAuthenticated) {
+      fetchClientes();
+    }
+  }, [isAuthenticated, fetchClientes]);
 
   // Memoizar clientes nuevos (últimos 30 días o máximo 50)
   const clientesNuevos = useMemo(() => {
@@ -148,24 +145,11 @@ function App() {
     const diaHoy = hoy.getDate();
     const mesHoy = hoy.getMonth(); // 0-11
     
-    console.log('=== DEBUG CUMPLEAÑOS ===');
-    console.log(`📅 Fecha de hoy: ${diaHoy}/${mesHoy + 1}/${hoy.getFullYear()}`);
-    console.log(`👥 Total de clientes cargados: ${clientes.length}`);
-    
-    // Mostrar todas las fechas de nacimiento
-    clientes.forEach((cliente, idx) => {
-      if (cliente.fechaNacimiento) {
-        console.log(`${idx + 1}. ${cliente.nombre} - Fecha: "${cliente.fechaNacimiento}"`);
-      }
-    });
-    
     const cumpleaneros = clientes.filter(cliente => {
       if (!cliente.fechaNacimiento) return false;
       
       let fechaNac;
       const fechaStr = String(cliente.fechaNacimiento).trim();
-      
-      console.log(`\n🔍 Procesando: ${cliente.nombre} - "${fechaStr}"`);
       
       // Parsear diferentes formatos de fecha
       try {
@@ -180,13 +164,11 @@ function App() {
             
             // Validar que los valores sean números válidos
             if (isNaN(dia) || isNaN(mes) || isNaN(anio)) {
-              console.warn(`   Valores no numéricos: día=${partes[0]}, mes=${partes[1]}, año=${partes[2]}`);
               return false;
             }
             
             // Validar rangos básicos
             if (dia < 1 || dia > 31 || mes < 0 || mes > 11 || anio < 1900 || anio > 2100) {
-              console.warn(`   Valores fuera de rango: día=${dia}, mes=${mes + 1}, año=${anio}`);
               return false;
             }
             
@@ -194,61 +176,39 @@ function App() {
             
             // Verificar que la fecha resultante sea válida
             if (isNaN(fechaNac.getTime())) {
-              console.warn(`   Fecha DD/MM/YYYY inválida después de crear: ${fechaStr}`);
               return false;
             }
-            
-            console.log(`   Parseado DD/MM/YYYY → día: ${dia}, mes: ${mes + 1}, año: ${anio}`);
           } else {
-            console.warn(`   Formato DD/MM/YYYY con partes incorrectas: ${partes.length}`);
             return false;
           }
         } else if (fechaStr.includes('-')) {
           // Formato ISO: YYYY-MM-DD
           fechaNac = new Date(fechaStr);
           if (isNaN(fechaNac.getTime())) {
-            console.warn(`   Fecha ISO inválida: ${fechaStr}`);
             return false;
           }
-          console.log(`   Parseado ISO → ${fechaNac.getDate()}/${fechaNac.getMonth() + 1}/${fechaNac.getFullYear()}`);
         } else {
           // Intentar parsear como está
           fechaNac = new Date(fechaStr);
           if (isNaN(fechaNac.getTime())) {
-            console.warn(`   Fecha genérica inválida: ${fechaStr}`);
             return false;
           }
-          console.log(`   Parseado genérico → ${fechaNac}`);
         }
       } catch (error) {
-        console.error(`   Error parseando fecha "${fechaStr}":`, error.message);
         return false;
       }
       
       // Validar que la fecha sea válida
       if (isNaN(fechaNac.getTime())) {
-        console.log(`   ❌ FECHA INVÁLIDA`);
         return false;
       }
       
       const diaNac = fechaNac.getDate();
       const mesNac = fechaNac.getMonth();
       
-      console.log(`   Comparando: ${diaNac}/${mesNac + 1} vs ${diaHoy}/${mesHoy + 1}`);
-      
-      const esCumpleanos = diaNac === diaHoy && mesNac === mesHoy;
-      
-      if (esCumpleanos) {
-        console.log(`   🎉 ¡ES CUMPLEAÑOS!`);
-      } else {
-        console.log(`   ⚪ No es cumpleaños`);
-      }
-      
-      return esCumpleanos;
+      return diaNac === diaHoy && mesNac === mesHoy;
     });
     
-    console.log(`\n✅ Total cumpleañeros encontrados: ${cumpleaneros.length}`);
-    console.log('=== FIN DEBUG ===\n');
     return cumpleaneros;
   }, [clientes]);
 
@@ -272,7 +232,6 @@ function App() {
           
           // Validar fecha antes de calcular
           if (isNaN(fechaUltimaCompra.getTime())) {
-            console.warn(`   Fecha de última compra inválida: ${cliente.ultimaCompra}`);
             return false;
           }
           
@@ -282,7 +241,6 @@ function App() {
             return false;
           }
         } else {
-          console.log(`   No tiene fecha de última compra`);
           return false;
         }
       }

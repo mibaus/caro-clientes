@@ -58,34 +58,41 @@ const ClientList = memo(({ clientes, loading, onSelectCliente }) => {
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-      {clientes.map((cliente) => (
-        <div
-          key={cliente.id}
-          onClick={() => onSelectCliente(cliente)}
-          className="bg-gradient-to-br from-white to-amber-50/30 rounded-2xl p-6 border border-stone-200/60 hover:border-terracotta-300 hover:shadow-lg transition-all duration-300 cursor-pointer group"
-        >
-          <div className="flex items-start gap-4">
-            <div className="w-10 h-10 rounded-lg bg-terracotta-100/80 flex items-center justify-center flex-shrink-0 group-hover:bg-terracotta-200/80 transition-colors duration-300">
-              <User className="w-5 h-5 text-terracotta-700/70" />
-            </div>
-            <div className="flex-1 min-w-0">
-              <h3 className="text-lg font-bold text-stone-900 truncate leading-tight mb-1.5">
-                {cliente.nombre} {cliente.apellido}
-              </h3>
-              <div className="space-y-1">
-                <div className="flex items-center gap-1.5 text-sm text-stone-500">
-                  <MapPin className="w-3.5 h-3.5 flex-shrink-0" />
-                  <span className="truncate">{cliente.zona || 'Sin zona'}</span>
-                </div>
-                <div className={`flex items-center gap-1.5 text-sm font-medium ${obtenerColorDias(calcularDiasDesdeCompra(cliente.ultimaCompra))}`}>
-                  <Clock className="w-3.5 h-3.5 flex-shrink-0" />
-                  <span className="truncate">{formatearDiasCompra(calcularDiasDesdeCompra(cliente.ultimaCompra))}</span>
+      {clientes.map((cliente) => {
+        // Calcular una sola vez por cliente
+        const diasDesdeCompra = calcularDiasDesdeCompra(cliente.ultimaCompra);
+        const textoCompra = formatearDiasCompra(diasDesdeCompra);
+        const colorDias = obtenerColorDias(diasDesdeCompra);
+        
+        return (
+          <div
+            key={cliente.id}
+            onClick={() => onSelectCliente(cliente)}
+            className="bg-gradient-to-br from-white to-amber-50/30 rounded-2xl p-6 border border-stone-200/60 hover:border-terracotta-300 hover:shadow-lg transition-all duration-300 cursor-pointer group"
+          >
+            <div className="flex items-start gap-4">
+              <div className="w-10 h-10 rounded-lg bg-terracotta-100/80 flex items-center justify-center flex-shrink-0 group-hover:bg-terracotta-200/80 transition-colors duration-300">
+                <User className="w-5 h-5 text-terracotta-700/70" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <h3 className="text-lg font-bold text-stone-900 truncate leading-tight mb-1.5">
+                  {cliente.nombre} {cliente.apellido}
+                </h3>
+                <div className="space-y-1">
+                  <div className="flex items-center gap-1.5 text-sm text-stone-500">
+                    <MapPin className="w-3.5 h-3.5 flex-shrink-0" />
+                    <span className="truncate">{cliente.zona || 'Sin zona'}</span>
+                  </div>
+                  <div className={`flex items-center gap-1.5 text-sm font-medium ${colorDias}`}>
+                    <Clock className="w-3.5 h-3.5 flex-shrink-0" />
+                    <span className="truncate">{textoCompra}</span>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
-      ))}
+        );
+      })}
     </div>
   );
 });

@@ -130,6 +130,27 @@ vercel.json             - Configuración de Vercel
 3. El build se ejecuta automáticamente con `npm run build`
 4. Vercel sirve los archivos estáticos desde `/dist` y las APIs desde `/api`
 
+## 📱 Personalizar el Ícono de la App
+
+La aplicación está configurada como PWA (Progressive Web App) y puede instalarse en la pantalla de inicio del celular.
+
+### Cambiar el ícono:
+
+1. **Crea dos imágenes PNG:**
+   - `icon-192.png` (192x192 píxeles)
+   - `icon-512.png` (512x512 píxeles)
+
+2. **Colócalas en la carpeta `public/`**
+
+3. **Redeploy la aplicación**
+
+4. **En el celular:**
+   - Abre la app en el navegador
+   - Selecciona "Agregar a pantalla de inicio"
+   - El nuevo ícono aparecerá
+
+📖 **Instrucciones detalladas:** Ver `public/ICONOS-README.md`
+
 ## 🎨 Stack Tecnológico
 
 - **Frontend:** React 18 + Vite

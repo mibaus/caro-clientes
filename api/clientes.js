@@ -18,6 +18,10 @@ export default async function handler(req, res) {
         const url = `${scriptUrl}?action=getClientes&token=${token}`;
         const response = await fetch(url);
         const data = await response.json();
+        
+        // Agregar headers de caché para reducir llamadas
+        res.setHeader('Cache-Control', 's-maxage=60, stale-while-revalidate=120');
+        
         return res.status(200).json(data);
       }
   
