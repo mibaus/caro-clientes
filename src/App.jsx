@@ -55,16 +55,44 @@ function App() {
       }
       
       // Normalizar campos del API (mapear nombres de Google Sheets a nombres esperados)
-      clientesData = clientesData.map((cliente, index) => ({
-        id: cliente.ID || cliente.id || cliente.ClienteID || cliente.clienteID || cliente['ID Cliente'] || String(index + 1),
-        nombre: cliente.nombre || cliente.Nombre || '',
-        apellido: cliente.apellido || cliente.Apellido || '',
-        zona: cliente.zona || cliente.Zona || '',
-        telefono: cliente.telefono || cliente.Celular || cliente['Celular 📱'] || '',
-        fechaNacimiento: cliente.fechaNacimiento || cliente['Fecha de cumpleaños 🎂'] || cliente.fechaCumpleanos || '',
-        ultimaCompra: cliente.ultimaCompra || cliente['Última compra'] || cliente['Marca temporal'] || '',
-        contactado: cliente.Contactado || cliente.contactado || ''
-      }));
+      clientesData = clientesData.map((cliente, index) => {
+        // Validar ultimaCompra
+        const ultimaCompraRaw = cliente.ultimaCompra || cliente['Última compra'] || cliente['Marca temporal'] || '';
+        let ultimaCompraValidada = '';
+        if (ultimaCompraRaw) {
+          const testDate = new Date(ultimaCompraRaw);
+          if (!isNaN(testDate.getTime())) {
+            ultimaCompraValidada = ultimaCompraRaw;
+          } else {
+            console.warn(`ultimaCompra inválida ignorada para cliente ${index}:`, ultimaCompraRaw);
+          }
+        }
+        
+        // Validar fechaNacimiento
+        const fechaNacimientoRaw = cliente.fechaNacimiento || cliente['Fecha de cumpleaños 🎂'] || cliente.fechaCumpleanos || '';
+        let fechaNacimientoValidada = '';
+        if (fechaNacimientoRaw) {
+          const testDate = new Date(fechaNacimientoRaw);
+          // Para fechas de cumpleaños, también aceptar formato DD/MM/YYYY
+          const esFechaValida = !isNaN(testDate.getTime()) || /^\d{1,2}\/\d{1,2}\/\d{4}$/.test(fechaNacimientoRaw);
+          if (esFechaValida) {
+            fechaNacimientoValidada = fechaNacimientoRaw;
+          } else {
+            console.warn(`fechaNacimiento inválida ignorada para cliente ${index}:`, fechaNacimientoRaw);
+          }
+        }
+        
+        return {
+          id: cliente.ID || cliente.id || cliente.ClienteID || cliente.clienteID || cliente['ID Cliente'] || String(index + 1),
+          nombre: cliente.nombre || cliente.Nombre || '',
+          apellido: cliente.apellido || cliente.Apellido || '',
+          zona: cliente.zona || cliente.Zona || '',
+          telefono: cliente.telefono || cliente.Celular || cliente['Celular 📱'] || '',
+          fechaNacimiento: fechaNacimientoValidada,
+          ultimaCompra: ultimaCompraValidada,
+          contactado: cliente.Contactado || cliente.contactado || ''
+        };
+      });
       
       
       if (clientesData.length > 0) {
