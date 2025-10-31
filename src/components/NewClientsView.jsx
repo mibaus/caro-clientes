@@ -69,32 +69,57 @@ Equipo Caro Righetti`;
   };
 
   const marcarComoContactado = async (clienteId) => {
+    console.log('═══════════════════════════════════════════════════');
+    console.log('🔵 [FRONTEND] INICIO - Marcar cliente como contactado');
+    console.log('🔵 [FRONTEND] ClienteId:', clienteId);
+    console.log('🔵 [FRONTEND] Timestamp:', new Date().toISOString());
+    console.log('═══════════════════════════════════════════════════');
+    
     try {
-      console.log('🔵 [FRONTEND] Iniciando marcar contactado para clienteId:', clienteId);
-      
       // Ocultar inmediatamente (UI optimista)
       setClientesOcultosLocal(prev => [...prev, clienteId]);
       setProcesando(prev => [...prev, clienteId]);
 
       console.log('🔵 [FRONTEND] Llamando a /api/marcar-contactado...');
       
+      const requestBody = { clienteId };
+      console.log('🔵 [FRONTEND] Request body:', JSON.stringify(requestBody));
+      
       // Llamar al API para marcar en Google Sheets
       const response = await fetch('/api/marcar-contactado', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ clienteId })
+        body: JSON.stringify(requestBody)
       });
 
-      console.log('🔵 [FRONTEND] Respuesta recibida. Status:', response.status);
+      console.log('🔵 [FRONTEND] Respuesta recibida');
+      console.log('🔵 [FRONTEND] Status:', response.status);
+      console.log('🔵 [FRONTEND] Status Text:', response.statusText);
 
       const data = await response.json();
-      console.log('🔵 [FRONTEND] Data de respuesta:', data);
+      console.log('🔵 [FRONTEND] ═══ RESPUESTA COMPLETA ═══');
+      console.log('🔵 [FRONTEND] Data:', JSON.stringify(data, null, 2));
+      
+      if (data.version) {
+        console.log('🔵 [FRONTEND] ✅ Versión de Apps Script:', data.version);
+      }
+      
+      if (data.success) {
+        console.log('🔵 [FRONTEND] ✅ SUCCESS:', data.message);
+        console.log('🔵 [FRONTEND] ✅ Fila actualizada:', data.fila);
+      }
+      
+      if (data.error) {
+        console.error('🔵 [FRONTEND] ❌ ERROR:', data.error);
+      }
 
       if (!response.ok) {
         throw new Error(data.error || 'Error al marcar como contactado');
       }
 
-      console.log('✅ [FRONTEND] Cliente marcado exitosamente');
+      console.log('═══════════════════════════════════════════════════');
+      console.log('✅ [FRONTEND] ÉXITO - Cliente marcado correctamente');
+      console.log('═══════════════════════════════════════════════════');
 
       // Notificar al componente padre para refrescar datos
       if (onClienteContactado) {
@@ -102,8 +127,14 @@ Equipo Caro Righetti`;
       }
 
     } catch (error) {
-      console.error('❌ [FRONTEND] Error al marcar contactado:', error);
-      alert('No se pudo marcar el cliente como contactado. Intenta nuevamente.\n\nError: ' + error.message);
+      console.log('═══════════════════════════════════════════════════');
+      console.error('❌ [FRONTEND] ERROR COMPLETO');
+      console.error('❌ [FRONTEND] Mensaje:', error.message);
+      console.error('❌ [FRONTEND] Stack:', error.stack);
+      console.log('═══════════════════════════════════════════════════');
+      
+      alert('No se pudo marcar el cliente como contactado.\n\nError: ' + error.message + '\n\nRevisá la consola del navegador (F12) para más detalles.');
+      
       // Revertir el cambio optimista
       setClientesOcultosLocal(prev => prev.filter(id => id !== clienteId));
     } finally {
