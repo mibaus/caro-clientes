@@ -70,7 +70,7 @@ Esta semana queremos agasajarte con una copa de bienvenida sin cargo y un benefi
         {clientes.map((cliente) => (
           <div
             key={cliente.id}
-            className="group glass shadow-glass hover:shadow-glass-lg rounded-2xl p-6 ring-2 ring-pink-400/30 hover:ring-pink-400/50 transition-all duration-300 hover:-translate-y-1"
+            className="group bg-white/70 backdrop-blur-md border border-white/30 shadow-lg hover:shadow-xl rounded-2xl p-6 ring-2 ring-pink-400/30 hover:ring-pink-400/50 transition-all duration-300 hover:-translate-y-1"
           >
             <div className="flex items-start justify-between gap-4">
               <div className="flex items-start gap-3 flex-1 min-w-0">

@@ -148,7 +148,7 @@ Equipo Caro Righetti`;
           return (
             <div
               key={cliente.id}
-              className={`group relative glass shadow-glass hover:shadow-glass-lg rounded-2xl p-6 transition-all duration-300 hover:-translate-y-1 ${
+              className={`group relative bg-white/70 backdrop-blur-md border border-white/30 shadow-lg hover:shadow-xl rounded-2xl p-6 transition-all duration-300 hover:-translate-y-1 ${
                 esReciente
                   ? 'ring-2 ring-green-400/30 hover:ring-green-400/50'
                   : ''

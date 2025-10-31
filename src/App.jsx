@@ -311,7 +311,7 @@ function App() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-peach-50 via-lavender-50 to-stone-50">
       {/* Header */}
-      <header className="glass-strong shadow-glass sticky top-0 z-40">
+      <header className="bg-white/85 backdrop-blur-xl border-b border-white/40 shadow-lg sticky top-0 z-40">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             {/* Logo/Título */}
@@ -348,7 +348,7 @@ function App() {
           />
           
           {/* Drawer */}
-          <div className="fixed top-0 right-0 h-full w-72 glass-strong shadow-glass-lg z-50 animate-slide-in">
+          <div className="fixed top-0 right-0 h-full w-72 bg-white/90 backdrop-blur-xl border-l border-white/40 shadow-2xl z-50 animate-slide-in">
             <div className="p-6">
               {/* Header del menú */}
               <div className="flex items-center justify-between mb-8">
@@ -423,7 +423,7 @@ function App() {
         {activeView === 'clientes' && (
           <div className="space-y-6">
             <SearchBar onSearch={handleSearch} zonas={zonas} />
-            <div className="glass shadow-glass-lg rounded-2xl p-8">
+            <div className="bg-white/70 backdrop-blur-md border border-white/30 shadow-xl rounded-2xl p-8">
               <ClientList
                 clientes={clientesFiltrados}
                 loading={loading}
@@ -434,7 +434,7 @@ function App() {
         )}
 
         {activeView === 'cumpleanos' && (
-          <div className="glass shadow-glass-lg rounded-2xl p-8">
+          <div className="bg-white/70 backdrop-blur-md border border-white/30 shadow-xl rounded-2xl p-8">
             <Suspense fallback={
               <div className="flex justify-center items-center py-20">
                 <Loader2 className="w-8 h-8 text-terracotta-600 animate-spin" />
@@ -446,7 +446,7 @@ function App() {
         )}
 
         {activeView === 'nuevos' && (
-          <div className="glass shadow-glass-lg rounded-2xl p-8">
+          <div className="bg-white/70 backdrop-blur-md border border-white/30 shadow-xl rounded-2xl p-8">
             <Suspense fallback={
               <div className="flex justify-center items-center py-20">
                 <Loader2 className="w-8 h-8 text-terracotta-600 animate-spin" />
