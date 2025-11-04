@@ -128,7 +128,7 @@ const ClientList = memo(({ clientes, loading, onSelectCliente }) => {
                   className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-green-500 hover:bg-green-600 text-white rounded-xl font-medium text-sm transition-colors duration-200 shadow-sm hover:shadow-md"
                 >
                   <MessageCircle className="w-4 h-4" />
-                  <span>Enviar mensaje de recupero</span>
+                  <span>Invitar a volver</span>
                 </button>
               </div>
             )}
