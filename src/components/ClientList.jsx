@@ -43,7 +43,6 @@ const enviarMensajeRecupero = (cliente, e) => {
   e.stopPropagation(); // Evitar que se abra el modal del cliente
   
   const nombre = cliente.nombre || 'cliente';
-  // Usar códigos HTML para emojis para mejor compatibilidad
   const mensaje = `Hola ${nombre} 😊
 
 Te esperamos en Caro Righetti Cocina de Autor para disfrutar de una experiencia distinta.
@@ -52,18 +51,41 @@ Con tu reserva, te recibimos con una copa de cortesía y un amuse-bouche o mini 
 
 ¡Te esperamos pronto!`;
   
-  // Limpiar el número de teléfono (solo dígitos)
-  const telefonoLimpio = String(cliente.telefono || '').replace(/\D/g, '');
+  // Obtener teléfono original
+  const telefonoOriginal = String(cliente.telefono || '').trim();
   
-  if (!telefonoLimpio) {
+  if (!telefonoOriginal) {
     alert('Este cliente no tiene número de teléfono registrado');
     return;
   }
   
-  // Codificar el mensaje para URL usando encodeURIComponent que maneja bien los emojis UTF-8
+  // Limpiar el número de teléfono (solo dígitos)
+  let telefonoLimpio = telefonoOriginal.replace(/\D/g, '');
+  
+  // Si el número no tiene código de país (54 para Argentina), agregarlo
+  if (telefonoLimpio.length === 10 && !telefonoLimpio.startsWith('54')) {
+    // Formato: 0111234567 -> 5491112345678
+    // Quitar el 0 inicial del código de área si existe y agregar 549
+    if (telefonoLimpio.startsWith('0')) {
+      telefonoLimpio = '549' + telefonoLimpio.substring(1);
+    } else {
+      telefonoLimpio = '54' + telefonoLimpio;
+    }
+  } else if (telefonoLimpio.length === 11 && telefonoLimpio.startsWith('0')) {
+    // Formato: 01112345678 -> 5491112345678
+    telefonoLimpio = '549' + telefonoLimpio.substring(1);
+  } else if (telefonoLimpio.length > 10 && !telefonoLimpio.startsWith('54')) {
+    // Si tiene más de 10 dígitos pero no empieza con 54, agregar 54
+    telefonoLimpio = '54' + telefonoLimpio;
+  }
+  
+  console.log('Teléfono original:', telefonoOriginal);
+  console.log('Teléfono limpio:', telefonoLimpio);
+  
+  // Codificar el mensaje para URL
   const mensajeCodificado = encodeURIComponent(mensaje);
   
-  // Abrir WhatsApp (usar api.whatsapp.com para mejor compatibilidad)
+  // Abrir WhatsApp
   const url = `https://api.whatsapp.com/send?phone=${telefonoLimpio}&text=${mensajeCodificado}`;
   window.open(url, '_blank');
 };
