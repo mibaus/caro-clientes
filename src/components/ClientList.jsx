@@ -1,5 +1,5 @@
 import { memo } from 'react';
-import { User, MapPin, Loader2, Clock } from 'lucide-react';
+import { User, MapPin, Loader2, Clock, MessageCircle } from 'lucide-react';
 
 // Función para calcular días desde la última compra
 const calcularDiasDesdeCompra = (fechaCompra) => {
@@ -36,6 +36,35 @@ const obtenerColorDias = (dias) => {
   if (dias < 60) return 'text-yellow-600';
   if (dias < 90) return 'text-orange-600';
   return 'text-red-600';
+};
+
+// Función para enviar mensaje de WhatsApp
+const enviarMensajeRecupero = (cliente, e) => {
+  e.stopPropagation(); // Evitar que se abra el modal del cliente
+  
+  const nombre = cliente.nombre || 'cliente';
+  const mensaje = `Hola ${nombre} 😊
+
+Te esperamos en Caro Righetti Cocina de Autor para disfrutar de una experiencia distinta.
+
+Con tu reserva, te recibimos con una copa de cortesía y un amuse-bouche o mini tabla de quesos 🍷🧀
+
+¡Te esperamos pronto!`;
+  
+  // Limpiar el número de teléfono (solo dígitos)
+  const telefonoLimpio = String(cliente.telefono || '').replace(/\D/g, '');
+  
+  if (!telefonoLimpio) {
+    alert('Este cliente no tiene número de teléfono registrado');
+    return;
+  }
+  
+  // Codificar el mensaje para URL
+  const mensajeCodificado = encodeURIComponent(mensaje);
+  
+  // Abrir WhatsApp
+  const url = `https://wa.me/${telefonoLimpio}?text=${mensajeCodificado}`;
+  window.open(url, '_blank');
 };
 
 const ClientList = memo(({ clientes, loading, onSelectCliente }) => {
@@ -90,6 +119,19 @@ const ClientList = memo(({ clientes, loading, onSelectCliente }) => {
                 </div>
               </div>
             </div>
+            
+            {/* Botón de WhatsApp para clientes con más de 60 días sin comprar */}
+            {diasDesdeCompra !== null && diasDesdeCompra >= 60 && (
+              <div className="mt-4 pt-4 border-t border-stone-200/60">
+                <button
+                  onClick={(e) => enviarMensajeRecupero(cliente, e)}
+                  className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-green-500 hover:bg-green-600 text-white rounded-xl font-medium text-sm transition-colors duration-200 shadow-sm hover:shadow-md"
+                >
+                  <MessageCircle className="w-4 h-4" />
+                  <span>Enviar mensaje de recupero</span>
+                </button>
+              </div>
+            )}
           </div>
         );
       })}
