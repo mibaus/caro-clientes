@@ -43,6 +43,7 @@ const enviarMensajeRecupero = (cliente, e) => {
   e.stopPropagation(); // Evitar que se abra el modal del cliente
   
   const nombre = cliente.nombre || 'cliente';
+  // Usar códigos HTML para emojis para mejor compatibilidad
   const mensaje = `Hola ${nombre} 😊
 
 Te esperamos en Caro Righetti Cocina de Autor para disfrutar de una experiencia distinta.
@@ -59,11 +60,11 @@ Con tu reserva, te recibimos con una copa de cortesía y un amuse-bouche o mini 
     return;
   }
   
-  // Codificar el mensaje para URL
+  // Codificar el mensaje para URL usando encodeURIComponent que maneja bien los emojis UTF-8
   const mensajeCodificado = encodeURIComponent(mensaje);
   
-  // Abrir WhatsApp
-  const url = `https://wa.me/${telefonoLimpio}?text=${mensajeCodificado}`;
+  // Abrir WhatsApp (usar api.whatsapp.com para mejor compatibilidad)
+  const url = `https://api.whatsapp.com/send?phone=${telefonoLimpio}&text=${mensajeCodificado}`;
   window.open(url, '_blank');
 };
 
