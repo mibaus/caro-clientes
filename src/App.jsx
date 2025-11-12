@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useMemo, lazy, Suspense } from 'react';
-import { Cake, Users, Loader2, Menu, X, UserPlus } from 'lucide-react';
+import { Cake, Loader2, Menu, X, UserPlus } from 'lucide-react';
 import SearchBar from './components/SearchBar';
 import ClientList from './components/ClientList';
 import Login from './components/Login';
@@ -473,24 +473,17 @@ function App() {
           <div className="space-y-6">
             <SearchBar onSearch={handleSearch} zonas={zonas} />
             
-            {/* Contador de usuarios */}
-            {!loading && clientes.length > 0 && (
-              <div className="flex items-center justify-center">
-                <div className="bg-white/60 backdrop-blur-sm border border-white/50 rounded-xl px-6 py-3 shadow-lg">
-                  <div className="flex items-center gap-3">
-                    <Users className="w-5 h-5 text-terracotta-600" />
-                    <span className="text-stone-800 font-medium">
-                      {clientesFiltrados.length === clientes.length 
-                        ? `Mostrando ${clientesFiltrados.length} clientes`
-                        : `Mostrando ${clientesFiltrados.length} de ${clientes.length} clientes`
-                      }
-                    </span>
-                  </div>
+            <div className="bg-white/70 backdrop-blur-md border border-white/30 shadow-xl rounded-2xl p-8 relative">
+              {/* Contador sutil en esquina superior derecha */}
+              {!loading && clientes.length > 0 && (
+                <div className="absolute top-4 right-6 text-sm text-stone-500 font-normal">
+                  {clientesFiltrados.length === clientes.length 
+                    ? `${clientesFiltrados.length} clientes`
+                    : `${clientesFiltrados.length} de ${clientes.length} clientes`
+                  }
                 </div>
-              </div>
-            )}
-            
-            <div className="bg-white/70 backdrop-blur-md border border-white/30 shadow-xl rounded-2xl p-8">
+              )}
+              
               <ClientList
                 clientes={clientesFiltrados}
                 loading={loading}
