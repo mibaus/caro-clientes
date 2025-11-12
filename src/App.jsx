@@ -113,7 +113,13 @@ function App() {
         const zonasUnicas = [...new Set(todasLasZonas)];
         console.log('Zonas únicas después del Set:', zonasUnicas);
         
-        setZonas(zonasUnicas);
+        // Calcular conteo de clientes por zona
+        const zonasConConteo = zonasUnicas.map(zona => ({
+          nombre: zona,
+          conteo: clientesData.filter(c => c.zona === zona).length
+        }));
+        
+        setZonas(zonasConConteo);
       } else {
         // Sin clientes en la base de datos (puede ser normal si no hay datos)
         setClientes([]);

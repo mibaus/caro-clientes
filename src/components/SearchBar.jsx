@@ -8,7 +8,7 @@ const SearchBar = memo(({ onSearch, zonas = [] }) => {
 
   // Memoizar las opciones de filtros para evitar re-renders innecesarios
   const zonasOrdenadas = useMemo(() => {
-    return [...zonas].sort();
+    return [...zonas].sort((a, b) => a.nombre.localeCompare(b.nombre));
   }, [zonas]);
 
   const opcionesUltimaCompra = useMemo(() => [
@@ -50,11 +50,20 @@ const SearchBar = memo(({ onSearch, zonas = [] }) => {
             className="w-full pl-12 pr-4 py-3.5 rounded-xl border border-stone-200 focus:outline-none focus:ring-2 focus:ring-terracotta-400 focus:border-transparent transition-all duration-200 appearance-none bg-white cursor-pointer text-stone-900"
           >
             <option value="">Todas las zonas</option>
-            {zonasOrdenadas.map((zona) => (
-              <option key={zona} value={zona}>
-                {zona}
-              </option>
-            ))}
+            {zonasOrdenadas.map((zona) => {
+              const zonaNombre = zona.nombre || zona;
+              const zonaConteo = zona.conteo;
+              return (
+                <option key={zonaNombre} value={zonaNombre}>
+                  {zonaNombre}
+                  {zonaConteo !== undefined && (
+                    <span className="text-xs text-stone-400 opacity-75 ml-1">
+                      ({zonaConteo})
+                    </span>
+                  )}
+                </option>
+              );
+            })}
           </select>
         </div>
 
