@@ -473,22 +473,28 @@ function App() {
           <div className="space-y-6">
             <SearchBar onSearch={handleSearch} zonas={zonas} />
             
-            <div className="bg-white/70 backdrop-blur-md border border-white/30 shadow-xl rounded-2xl p-8 relative">
-              {/* Contador sutil en esquina superior derecha */}
-              {!loading && clientes.length > 0 && (
-                <div className="absolute top-4 right-6 text-sm text-stone-500 font-normal">
-                  {clientesFiltrados.length === clientes.length 
-                    ? `${clientesFiltrados.length} clientes`
-                    : `${clientesFiltrados.length} de ${clientes.length} clientes`
-                  }
-                </div>
-              )}
+            <div className="bg-white/70 backdrop-blur-md border border-white/30 shadow-xl rounded-2xl relative">
+              {/* Header con contador sutil */}
+              <div className="flex justify-between items-center px-8 pt-6 pb-2">
+                <div></div>
+                {!loading && clientes.length > 0 && (
+                  <div className="text-sm text-stone-500 font-normal">
+                    {clientesFiltrados.length === clientes.length 
+                      ? `${clientesFiltrados.length} clientes`
+                      : `${clientesFiltrados.length} de ${clientes.length} clientes`
+                    }
+                  </div>
+                )}
+              </div>
               
-              <ClientList
-                clientes={clientesFiltrados}
-                loading={loading}
-                onSelectCliente={setSelectedCliente}
-              />
+              {/* Lista de clientes con padding ajustado */}
+              <div className="px-8 pb-8">
+                <ClientList
+                  clientes={clientesFiltrados}
+                  loading={loading}
+                  onSelectCliente={setSelectedCliente}
+                />
+              </div>
             </div>
           </div>
         )}
