@@ -82,7 +82,7 @@ function App() {
           id: cliente.ID || cliente.id || cliente.ClienteID || cliente.clienteID || cliente['ID Cliente'] || String(index + 1),
           nombre: cliente.nombre || cliente.Nombre || '',
           apellido: cliente.apellido || cliente.Apellido || '',
-          zona: cliente.zona || cliente.Zona || '',
+          zona: (cliente.zona || cliente.Zona || '').toLowerCase().replace(/\b\w/g, l => l.toUpperCase()),
           telefono: cliente.telefono || cliente.Celular || cliente['Celular 📱'] || '',
           fechaNacimiento: fechaNacimientoValidada,
           ultimaCompra: ultimaCompraValidada,
