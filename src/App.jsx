@@ -477,30 +477,14 @@ function App() {
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {activeView === 'clientes' && (
           <div className="space-y-6">
-            <SearchBar onSearch={handleSearch} zonas={zonas} />
+            <SearchBar onSearch={handleSearch} zonas={zonas} totalClientes={clientes.length} />
             
-            <div className="bg-white/70 backdrop-blur-md border border-white/30 shadow-xl rounded-2xl relative">
-              {/* Header con contador sutil */}
-              <div className="flex justify-between items-center px-8 pt-6 pb-2">
-                <div></div>
-                {!loading && clientes.length > 0 && (
-                  <div className="text-sm text-stone-500 font-normal">
-                    {clientesFiltrados.length === clientes.length 
-                      ? `${clientesFiltrados.length} clientes`
-                      : `${clientesFiltrados.length} de ${clientes.length} clientes`
-                    }
-                  </div>
-                )}
-              </div>
-              
-              {/* Lista de clientes con padding ajustado */}
-              <div className="px-8 pb-8">
-                <ClientList
-                  clientes={clientesFiltrados}
-                  loading={loading}
-                  onSelectCliente={setSelectedCliente}
-                />
-              </div>
+            <div className="bg-white/70 backdrop-blur-md border border-white/30 shadow-xl rounded-2xl p-8">
+              <ClientList
+                clientes={clientesFiltrados}
+                loading={loading}
+                onSelectCliente={setSelectedCliente}
+              />
             </div>
           </div>
         )}

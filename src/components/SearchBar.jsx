@@ -1,7 +1,7 @@
 import { useState, useEffect, memo, useMemo } from 'react';
 import { Search, MapPin, Clock } from 'lucide-react';
 
-const SearchBar = memo(({ onSearch, zonas = [] }) => {
+const SearchBar = memo(({ onSearch, zonas = [], totalClientes = 0 }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedZona, setSelectedZona] = useState('');
   const [selectedUltimaCompra, setSelectedUltimaCompra] = useState('');
@@ -49,7 +49,12 @@ const SearchBar = memo(({ onSearch, zonas = [] }) => {
             onChange={(e) => setSelectedZona(e.target.value)}
             className="w-full pl-12 pr-4 py-3.5 rounded-xl border border-stone-200 focus:outline-none focus:ring-2 focus:ring-terracotta-400 focus:border-transparent transition-all duration-200 appearance-none bg-white cursor-pointer text-stone-900"
           >
-            <option value="">Todas las zonas</option>
+            <option value="">
+              Todas las zonas
+              <span className="text-xs text-stone-500 ml-1">
+                ({totalClientes})
+              </span>
+            </option>
             {zonasOrdenadas.map((zona) => {
               const zonaNombre = zona.nombre || zona;
               const zonaConteo = zona.conteo;
@@ -57,7 +62,7 @@ const SearchBar = memo(({ onSearch, zonas = [] }) => {
                 <option key={zonaNombre} value={zonaNombre}>
                   {zonaNombre}
                   {zonaConteo !== undefined && (
-                    <span className="text-xs text-stone-400 opacity-75 ml-1">
+                    <span className="text-xs text-stone-500 ml-1">
                       ({zonaConteo})
                     </span>
                   )}
