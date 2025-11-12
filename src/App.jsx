@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useMemo, lazy, Suspense } from 'react';
-import { Cake, Loader2, Menu, X, UserPlus } from 'lucide-react';
+import { Cake, Loader2, Menu, X, UserPlus, Users } from 'lucide-react';
 import SearchBar from './components/SearchBar';
 import ClientList from './components/ClientList';
 import Login from './components/Login';
