@@ -54,7 +54,7 @@ function App() {
         clientesData = data.data;
       }
       
-      // Normalizar campos del API (mapear nombres de Google Sheets a nombres esperados)
+        // Normalizar campos del API (mapear nombres de Google Sheets a nombres esperados)
       clientesData = clientesData.map((cliente, index) => {
         // Validar ultimaCompra
         const ultimaCompraRaw = cliente.ultimaCompra || cliente['Última compra'] || cliente['Marca temporal'] || '';
@@ -82,7 +82,7 @@ function App() {
           id: cliente.ID || cliente.id || cliente.ClienteID || cliente.clienteID || cliente['ID Cliente'] || String(index + 1),
           nombre: cliente.nombre || cliente.Nombre || '',
           apellido: cliente.apellido || cliente.Apellido || '',
-          zona: (cliente.zona || cliente.Zona || '').toLowerCase().replace(/\b\w/g, l => l.toUpperCase()),
+          zona: normalizeZona(cliente.zona || cliente.Zona || ''),
           telefono: cliente.telefono || cliente.Celular || cliente['Celular 📱'] || '',
           fechaNacimiento: fechaNacimientoValidada,
           ultimaCompra: ultimaCompraValidada,
@@ -90,13 +90,29 @@ function App() {
         };
       });
       
+      // Función para normalizar zonas
+      function normalizeZona(zona) {
+        if (!zona) return '';
+        
+        // Remover espacios al inicio y final, y caracteres invisibles
+        const trimmed = zona.trim().replace(/\s+/g, ' ');
+        
+        // Convertir a título case
+        return trimmed.toLowerCase().replace(/\b\w/g, l => l.toUpperCase());
+      }
+      
       
       if (clientesData.length > 0) {
         setClientes(clientesData);
         setClientesFiltrados(clientesData);
         
         // Extraer zonas únicas
-        const zonasUnicas = [...new Set(clientesData.map(c => c.zona).filter(Boolean))];
+        const todasLasZonas = clientesData.map(c => c.zona).filter(Boolean);
+        console.log('Zonas crudas:', todasLasZonas);
+        
+        const zonasUnicas = [...new Set(todasLasZonas)];
+        console.log('Zonas únicas después del Set:', zonasUnicas);
+        
         setZonas(zonasUnicas);
       } else {
         // Sin clientes en la base de datos (puede ser normal si no hay datos)
